@@ -11,7 +11,7 @@ let quizSubmitted = false;
 const MAX_WRONG_TOPIC = 3;
 const MAX_WRONG_MILESTONE = 5;
 
-$(async function () {
+document.addEventListener('DOMContentLoaded', async function () {
   user = await getUser();
   updateNavAuth(user);
 
@@ -30,7 +30,7 @@ $(async function () {
 });
 
 async function loadTopic() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('topics')
     .select('*, milestones(title, id)')
     .eq('slug', slug)
@@ -59,7 +59,7 @@ async function loadTopic() {
     </div>
   `;
 
-  const { data: qs } = await supabase
+  const { data: qs } = await supabaseClient
     .from('questions')
     .select('*')
     .eq('topic_id', topic.id)
@@ -99,7 +99,7 @@ async function loadTopic() {
 }
 
 async function loadMilestoneTest() {
-  const { data: ms, error } = await supabase
+  const { data: ms, error } = await supabaseClient
     .from('milestones')
     .select('*')
     .eq('id', milestoneId)
@@ -112,7 +112,7 @@ async function loadMilestoneTest() {
 
   document.title = `${ms.title} Test – Fatafati`;
 
-  const { data: qs } = await supabase
+  const { data: qs } = await supabaseClient
     .from('questions')
     .select('*')
     .eq('milestone_id', milestoneId)
@@ -138,7 +138,10 @@ async function loadMilestoneTest() {
           <i class="fa-solid fa-circle-info"></i> 25 questions &nbsp;·&nbsp; You can get at most <strong>5 wrong</strong> to pass.
         </div>
       </div>
-      ${renderQuizForm(ms.title + ' Test', questions, MAX_WRONG_MILESTONE)}
+      ${questions.length === 0
+        ? `<div class="alert alert-info mt-3"><i class="fa-solid fa-circle-info"></i> No questions have been added to this milestone test yet.</div>`
+        : renderQuizForm(ms.title + ' Test', questions, MAX_WRONG_MILESTONE)
+      }
     </div>
   `;
 
@@ -187,31 +190,34 @@ function renderQuizForm(title, qs, maxWrong) {
 function bindQuizEvents(type) {
   let currentQ = 0;
 
-  $(document).on('change', 'input[type=radio]', function () {
-    const qi = parseInt(this.name.split('-')[1]);
-    $(`#submit-q-${qi}`).show();
+  document.addEventListener('change', function (e) {
+    if (e.target.type !== 'radio') return;
+    const qi = parseInt(e.target.name.split('-')[1]);
+    const btn = document.getElementById(`submit-q-${qi}`);
+    if (btn) btn.style.display = 'inline-flex';
   });
 
-  $(document).on('click', '[id^=submit-q-]', async function () {
-    const qi = parseInt($(this).data('qi'));
+  document.addEventListener('click', async function (e) {
+    const btn = e.target.closest('[id^="submit-q-"]');
+    if (!btn) return;
+    const qi = parseInt(btn.dataset.qi);
     const q = questions[qi];
-    const selected = $(`input[name=q-${qi}]:checked`).val();
-    if (selected === undefined) return;
+    const selected = document.querySelector(`input[name="q-${qi}"]:checked`);
+    if (!selected) return;
 
-    const selectedInt = parseInt(selected);
-    const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]');
+    const selectedInt = parseInt(selected.value);
     const isCorrect = selectedInt === q.correct_option;
 
-    $(`input[name=q-${qi}]`).prop('disabled', true);
-    $(`#submit-q-${qi}`).hide();
+    document.querySelectorAll(`input[name="q-${qi}"]`).forEach(r => r.disabled = true);
+    btn.style.display = 'none';
 
     if (isCorrect) {
-      $(`#opt-${qi}-${selectedInt}`).addClass('correct');
+      document.getElementById(`opt-${qi}-${selectedInt}`)?.classList.add('correct');
     } else {
-      $(`#opt-${qi}-${selectedInt}`).addClass('wrong');
-      $(`#opt-${qi}-${q.correct_option}`).addClass('correct');
+      document.getElementById(`opt-${qi}-${selectedInt}`)?.classList.add('wrong');
+      document.getElementById(`opt-${qi}-${q.correct_option}`)?.classList.add('correct');
       wrongCount++;
-      $('#wrong-count').text(wrongCount);
+      document.getElementById('wrong-count').textContent = wrongCount;
     }
 
     const maxWrong = type === 'topic' ? MAX_WRONG_TOPIC : MAX_WRONG_MILESTONE;
@@ -231,9 +237,9 @@ function bindQuizEvents(type) {
     }
 
     setTimeout(() => {
-      $(`#q-${qi}`).hide();
-      $(`#q-${currentQ}`).show();
-      $('#q-progress').text(`Question ${currentQ + 1} of ${questions.length}`);
+      document.getElementById(`q-${qi}`).style.display = 'none';
+      document.getElementById(`q-${currentQ}`).style.display = 'block';
+      document.getElementById('q-progress').textContent = `Question ${currentQ + 1} of ${questions.length}`;
     }, 600);
   });
 }
@@ -252,7 +258,7 @@ async function recordAttempt(passed, type) {
     payload.milestone_id = milestoneId;
   }
 
-  await supabase.from('test_attempts').insert(payload);
+  await supabaseClient.from('test_attempts').insert(payload);
 
   if (passed) {
     const progress = await getUserProgress(user.id);
@@ -265,20 +271,21 @@ async function recordAttempt(passed, type) {
     }
 
     if (progress) {
-      await supabase.from('user_progress').update(existing).eq('user_id', user.id);
+      await supabaseClient.from('user_progress').update(existing).eq('user_id', user.id);
     } else {
-      await supabase.from('user_progress').insert(existing);
+      await supabaseClient.from('user_progress').insert(existing);
     }
   }
 }
 
 function showResult(passed, type) {
-  $('#questions-container').hide();
+  document.getElementById('questions-container').style.display = 'none';
   const nextLink = type === 'topic'
     ? `<a href="/learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-arrow-right"></i> Back to Lessons</a>`
     : `<a href="/learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-trophy"></i> See Next Milestone</a>`;
 
-  $('#quiz-result').html(`
+  const result = document.getElementById('quiz-result');
+  result.innerHTML = `
     <div class="result-banner ${passed ? 'result-pass' : 'result-fail'}">
       <div class="result-icon"><i class="fa-solid fa-${passed ? 'circle-check' : 'circle-xmark'}"></i></div>
       <div class="result-title">${passed ? 'You passed!' : 'Better luck next time'}</div>
@@ -288,5 +295,6 @@ function showResult(passed, type) {
       }</p>
       ${passed ? nextLink : `<button class="btn btn-outline mt-3" onclick="window.location.reload()"><i class="fa-solid fa-rotate-right"></i> Retry</button>`}
     </div>
-  `).show();
+  `;
+  result.style.display = 'block';
 }

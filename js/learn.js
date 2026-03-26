@@ -1,4 +1,4 @@
-$(async function () {
+document.addEventListener('DOMContentLoaded', async function () {
   const user = await getUser();
   updateNavAuth(user);
 
@@ -8,7 +8,7 @@ $(async function () {
     renderProgressSidebar(progress);
   }
 
-  const { data: milestones, error } = await supabase
+  const { data: milestones, error } = await supabaseClient
     .from('milestones')
     .select('*, topics(id, title, slug, description, order_index)')
     .order('order_index');
@@ -16,6 +16,12 @@ $(async function () {
   if (error || !milestones) {
     document.getElementById('curriculum-container').innerHTML =
       '<div class="alert alert-error">Failed to load lessons. Please try again.</div>';
+    return;
+  }
+
+  if (milestones.length === 0) {
+    document.getElementById('curriculum-container').innerHTML =
+      '<div style="text-align:center;padding:4rem 0;color:var(--grey);"><i class="fa-solid fa-book-open" style="font-size:2.5rem;opacity:0.3;margin-bottom:1rem;display:block;"></i><p>No lessons available yet. Check back soon.</p></div>';
     return;
   }
 

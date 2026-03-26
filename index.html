@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fatafati – Learn English Step by Step</title>
-  <meta name="description" content="Fatafati offers structured English lessons organised into milestones and topics. Learn at your own pace with guided quizzes and progress tracking." />
+  <title>ফাটাফাটি – ধাপে ধাপে ইংরেজি শিখুন</title>
+  <meta name="description" content="ফাটাফাটি আপনাকে মাইলস্টোন এবং টপিকভিত্তিক সাজানো লেসনের মাধ্যমে ইংরেজি শেখার সুযোগ দেয়। নিজের ছন্দে শিখুন, কুইজ দিন এবং প্রোগ্রেস ট্র্যাক করুন।" />
   <meta name="keywords" content="english learning, english lessons, learn english online, english course, english practice, structured english" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://fatafati.com/" />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://fatafati.com/" />
-  <meta property="og:title" content="Fatafati – Learn English Step by Step" />
-  <meta property="og:description" content="Structured English lessons with milestone-based progression, quizzes, and progress tracking. Start learning today." />
+  <meta property="og:title" content="ফাটাফাটি – ধাপে ধাপে ইংরেজি শিখুন" />
+  <meta property="og:description" content="মাইলস্টোনভিত্তিক সাজানো লেসন, কুইজ এবং প্রোগ্রেস ট্র্যাকিং সহ ইংরেজি শিখুন। আজই শুরু করুন।" />
   <meta property="og:image" content="https://fatafati.com/assets/og/og-default.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Fatafati – Learn English Step by Step" />
-  <meta name="twitter:description" content="Structured English lessons with milestone-based progression, quizzes, and progress tracking." />
+  <meta name="twitter:title" content="ফাটাফাটি – ধাপে ধাপে ইংরেজি শিখুন" />
+  <meta name="twitter:description" content="মাইলস্টোনভিত্তিক সাজানো লেসন, কুইজ এবং প্রোগ্রেস ট্র্যাকিং সহ ইংরেজি শিখুন।" />
   <meta name="twitter:image" content="https://fatafati/assets/og/og-default.jpg" />
 
   <link rel="manifest" href="/manifest.json" />
@@ -236,27 +236,40 @@
       <img src="/assets/logo.png" alt="Fatafati" class="logo-img" />
     </a>
     <ul class="nav-links" id="main-nav">
-      <li><a href="/learn.html">Browse Lessons</a></li>
+      <li><a href="/learn.html">লেসনগুলো দেখুন</a></li>
       <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;">
-        <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
+        <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">সাইন ইন</a></li>
       </ul>
     </ul>
     <button class="btn btn-install" id="install-btn" aria-label="Install Fatafati app">
-      <i class="fa-solid fa-download"></i> Install App
+      <i class="fa-solid fa-download"></i> অ্যাপ ইনস্টল করুন
+    </button>
+    <button class="hamburger" id="hamburger-btn" aria-label="Open menu">
+      <i class="fa-solid fa-bars"></i>
     </button>
   </div>
 </nav>
+
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
+  <div class="mobile-menu-panel">
+    <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    <a href="/learn.html"><i class="fa-solid fa-book-open"></i> লেসনগুলো দেখুন</a>
+    <div class="mobile-menu-divider"></div>
+    <div id="mobile-auth-nav"></div>
+  </div>
+</div>
 
 <main>
   <section class="hero" aria-labelledby="hero-heading">
     <div class="container">
       <div class="hero-inner">
-        <div class="hero-eyebrow"><i class="fa-solid fa-star"></i> Structured Learning</div>
-        <h1 id="hero-heading">Learn English <em>step by step</em>, at your own pace</h1>
-        <p>Fatafati guides you through a structured curriculum — from the basics to fluency — with clear milestones, engaging lessons, and adaptive quizzes.</p>
+        <div class="hero-eyebrow"><i class="fa-solid fa-star"></i> সাজানো কারিকুলাম</div>
+        <h1 id="hero-heading">আপনার নিজের ছন্দে, <em>ধাপে ধাপে</em> ইংরেজি শিখুন</h1>
+        <p>ফাটাফাটি আপনাকে একটি সাজানো কারিকুলামের মাধ্যমে এগিয়ে নিয়ে যাবে—প্রাথমিক ধাপ থেকে শুরু করে সাবলীলভাবে কথা বলা পর্যন্ত। এখানে থাকছে স্পষ্ট মাইলস্টোন, আকর্ষণীয় লেসন এবং আপনার দক্ষতা যাচাইয়ের জন্য কুইজ।</p>
         <div class="hero-cta">
-          <a href="/learn.html" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> Browse Lessons</a>
-          <a href="#how-it-works" class="btn btn-outline" style="color:var(--white);border-color:rgba(255,255,255,0.4);">How it works</a>
+          <a href="/learn.html" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> লেসনগুলো দেখুন</a>
+          <a href="#how-it-works" class="btn btn-outline" style="color:var(--white);border-color:rgba(255,255,255,0.4);">এটি কীভাবে কাজ করে?</a>
         </div>
       </div>
     </div>
@@ -264,24 +277,24 @@
 
   <section class="how-it-works" id="how-it-works" aria-labelledby="how-heading">
     <div class="container">
-      <div class="section-label">The Process</div>
-      <h2 class="section-title" id="how-heading">A clear path to English fluency</h2>
-      <p class="section-subtitle">Three simple steps stand between you and confident English communication.</p>
+      <div class="section-label">পদ্ধতি</div>
+      <h2 class="section-title" id="how-heading">ইংরেজি শেখার সহজ পথ</h2>
+      <p class="section-subtitle">মাত্র তিনটি ধাপে আত্মবিশ্বাসী ইংরেজি যোগাযোগের দিকে এগিয়ে যান।</p>
       <div class="steps-grid">
         <article class="step-card">
           <div class="step-number">01</div>
-          <h3>Read your lesson</h3>
-          <p>Each topic contains a focused lesson with clear explanations and practical examples you can apply immediately.</p>
+          <h3>আপনার লেসন পড়ুন</h3>
+          <p>প্রতিটি টপিকে থাকছে নির্দিষ্ট লেসন, যা সহজ ব্যাখ্যা এবং বাস্তব উদাহরণের মাধ্যমে আপনার শেখাকে আনন্দদায়ক করবে।</p>
         </article>
         <article class="step-card">
           <div class="step-number">02</div>
-          <h3>Take the quiz</h3>
-          <p>Test your understanding with 10 multiple-choice questions. Pass to unlock the next topic in your milestone.</p>
+          <h3>কুইজে অংশ নিন</h3>
+          <p>১০টি মাল্টিপল চয়েস প্রশ্নের মাধ্যমে নিজের দক্ষতা যাচাই করুন। সফলভাবে পাস করলে আপনার পরবর্তী টপিকটি আনলক হবে।</p>
         </article>
         <article class="step-card">
           <div class="step-number">03</div>
-          <h3>Reach milestones</h3>
-          <p>Complete all topics in a milestone, then pass the milestone test to level up and access advanced content.</p>
+          <h3>মাইলস্টোন অর্জন করুন</h3>
+          <p>একটি মাইলস্টোনের সব টপিক শেষ করার পর মাইলস্টোন টেস্টে উত্তীর্ণ হয়ে আপনার লেভেল আরও উন্নত করুন।</p>
         </article>
       </div>
     </div>
@@ -289,29 +302,29 @@
 
   <section class="features-section" aria-labelledby="features-heading">
     <div class="container">
-      <div class="section-label" style="color:#ffb3b3;">Why Fatafati</div>
-      <h2 class="section-title" id="features-heading">Everything you need to succeed</h2>
-      <p class="section-subtitle">Built for self-paced learners who want structure without the rigidity.</p>
+      <div class="section-label" style="color:#ffb3b3;">কেন ফাটাফাটি</div>
+      <h2 class="section-title" id="features-heading">আপনার সাফল্যের জন্য যা কিছু প্রয়োজন</h2>
+      <p class="section-subtitle">যারা নিজের ছন্দে শিখতে চান, তাদের জন্যই তৈরি।</p>
       <div class="features-grid">
         <div class="feature-item">
           <div class="feature-icon"><i class="fa-solid fa-layer-group"></i></div>
-          <h3>Structured curriculum</h3>
-          <p>Topics grouped into milestones with a logical learning progression from beginner to advanced.</p>
+          <h3>সাজানো কারিকুলাম</h3>
+          <p>টপিকগুলো মাইলস্টোনের মাধ্যমে ধারাবাহিকভাবে সাজানো হয়েছে।</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon"><i class="fa-solid fa-lock-open"></i></div>
-          <h3>Gated progression</h3>
-          <p>Topics unlock sequentially so you build on solid foundations before moving to harder material.</p>
+          <h3>ধাপে ধাপে অগ্রগতি</h3>
+          <p>একটি টপিক শেষ করার পর পরেরটি আনলক হবে, যাতে আপনার গ্রামার এবং ফাউন্ডেশন মজবুত থাকে।</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
-          <h3>Progress tracking</h3>
-          <p>Your profile records every test attempt and milestone so you can see exactly how far you've come.</p>
+          <h3>প্রোগ্রেস ট্র্যাকিং</h3>
+          <p>আপনার প্রোফাইলে প্রতিটি টেস্ট এবং মাইলস্টোনের ফলাফল সংরক্ষিত থাকবে।</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon"><i class="fa-solid fa-mobile-screen"></i></div>
-          <h3>Works offline</h3>
-          <p>Install Fatafati as an app on your phone or desktop and keep learning even without internet.</p>
+          <h3>অফলাইনেও কার্যকর</h3>
+          <p>এটি অ্যাপ হিসেবে ইনস্টল করে নিন এবং ইন্টারনেট ছাড়াও আপনার পড়াশোনা চালিয়ে যান।</p>
         </div>
       </div>
     </div>
@@ -319,10 +332,10 @@
 
   <section class="cta-section" aria-labelledby="cta-heading">
     <div class="container">
-      <h2 id="cta-heading">Ready to start your English journey?</h2>
-      <p>Browse all lessons for free — no account needed to explore the curriculum.</p>
+      <h2 id="cta-heading">ইংরেজি শেখার যাত্রা শুরু করতে আপনি কি প্রস্তুত?</h2>
+      <p>কোনো অ্যাকাউন্ট ছাড়াই আমাদের সম্পূর্ণ কারিকুলাম এবং লেসনগুলো একবার দেখে নিন।</p>
       <a href="/learn.html" class="btn btn-primary" style="font-size:1.05rem;padding:0.85rem 2rem;">
-        <i class="fa-solid fa-book-open"></i> Explore All Lessons
+        <i class="fa-solid fa-book-open"></i> সব লেসনগুলো দেখুন
       </a>
     </div>
   </section>
@@ -335,8 +348,8 @@
         <img src="/assets/logo.png" alt="Fatafati" class="logo-img" style="height:32px;" />
       </a>
       <nav aria-label="Footer navigation">
-        <a href="/learn.html" style="margin-right:1.5rem;">Browse Lessons</a>
-        <a href="/profile.html">My Progress</a>
+        <a href="/learn.html" style="margin-right:1.5rem;">লেসনগুলো দেখুন</a>
+        <a href="/profile.html">আমার প্রোগ্রেস</a>
       </nav>
       <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; 2026 Fatafati. All rights reserved.</p>
     </div>
@@ -346,11 +359,11 @@
 <div class="modal-overlay" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
   <div class="modal" style="position:relative;">
     <button class="modal-close" id="close-auth" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-    <h2 class="modal-title" id="auth-modal-title">Sign in to Fatafati</h2>
-    <p class="text-muted mb-3">Track your progress and take quizzes.</p>
+    <h2 class="modal-title" id="auth-modal-title">ফাটাফাটিতে সাইন ইন করুন</h2>
+    <p class="text-muted mb-3">আপনার প্রোগ্রেস ট্র্যাক করুন এবং কুইজে অংশ নিন।</p>
     <div class="tab-nav" style="margin-bottom:2rem;">
-      <button class="tab-btn active" data-tab="login">Sign In</button>
-      <button class="tab-btn" data-tab="signup">Create Account</button>
+      <button class="tab-btn active" data-tab="login">সাইন ইন</button>
+      <button class="tab-btn" data-tab="signup">অ্যাকাউন্ট তৈরি করুন</button>
     </div>
     <div id="auth-alert"></div>
 
@@ -371,7 +384,7 @@
       </div>
       <button class="btn btn-primary w-100" id="login-btn">
         <span class="btn-text">
-          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> সাইন ইন
         </span>
         <span class="btn-spinner" style="display:none;">
           <i class="fa-solid fa-spinner fa-spin"></i>
@@ -396,7 +409,7 @@
       </div>
       <button class="btn btn-primary w-100" id="signup-btn">
         <span class="btn-text">
-          <i class="fa-solid fa-user-plus"></i> Create Account
+          <i class="fa-solid fa-user-plus"></i> অ্যাকাউন্ট তৈরি করুন
         </span>
         <span class="btn-spinner" style="display:none;">
           <i class="fa-solid fa-spinner fa-spin"></i>
@@ -486,7 +499,7 @@
       setLoading(btn, true);
       const { error } = await signIn(email, password);
       if (error) throw error;
-      window.location.reload();
+      window.location.href = window.location.pathname;
     } catch (err) {
       console.error(err);
       showAuthAlert(getErrorMessage(err));

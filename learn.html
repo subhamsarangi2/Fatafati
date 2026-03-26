@@ -153,8 +153,19 @@
       </ul>
     </ul>
     <button class="btn btn-install" id="install-btn"><i class="fa-solid fa-download"></i> Install App</button>
+    <button class="hamburger" id="hamburger-btn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
   </div>
 </nav>
+
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
+  <div class="mobile-menu-panel">
+    <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    <a href="/learn.html"><i class="fa-solid fa-book-open"></i> Browse Lessons</a>
+    <div class="mobile-menu-divider"></div>
+    <div id="mobile-auth-nav"></div>
+  </div>
+</div>
 
 <header class="page-header">
   <div class="container">

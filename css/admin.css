@@ -63,7 +63,7 @@
 }
 
 .stat-number {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Noto Serif Bengali', 'Playfair Display', serif;
   font-size: 2.5rem;
   color: var(--red);
   line-height: 1;

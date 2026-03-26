@@ -31,7 +31,7 @@
     <h2>Admin Panel</h2>
     <ul class="sidebar-nav">
       <li><a href="#" class="active" data-view="dashboard"><i class="fa-solid fa-chart-bar"></i> Dashboard</a></li>
-      <li><a href="#" data-view="content"><i class="fa-solid fa-upload"></i> Import Content</a></li>
+      <li><a href="#" data-view="curriculum"><i class="fa-solid fa-sitemap"></i> Import Curriculum</a></li>
       <li><a href="#" data-view="milestones"><i class="fa-solid fa-layer-group"></i> Milestones</a></li>
       <li><a href="#" data-view="topics"><i class="fa-solid fa-book"></i> Topics</a></li>
       <li><a href="#" data-view="attempts"><i class="fa-solid fa-list-check"></i> Test Attempts</a></li>
@@ -43,7 +43,16 @@
   </main>
 </div>
 
+<!-- Topic preview modal -->
+<div class="modal-overlay" id="topic-preview-modal">
+  <div class="modal" style="max-width:720px;width:95%;max-height:85vh;overflow-y:auto;position:relative;">
+    <button class="modal-close" id="topic-preview-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <div id="topic-preview-body"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="/js/supabase-client.js"></script>
 <script src="/js/admin.js"></script>
 </body>

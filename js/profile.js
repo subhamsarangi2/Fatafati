@@ -1,4 +1,4 @@
-$(async function () {
+document.addEventListener('DOMContentLoaded', async function () {
   const user = await requireAuth();
   if (!user) return;
 
@@ -38,7 +38,7 @@ $(async function () {
     </button>
   `;
 
-  const { data: attempts, error } = await supabase
+  const { data: attempts, error } = await supabaseClient
     .from('test_attempts')
     .select('*, topics(title), milestones(title)')
     .eq('user_id', user.id)
