@@ -225,6 +225,41 @@
       color: var(--blue, #0A3161);
     }
 
+    /* ── Gradient hover button ── */
+    .btn-gradient-hover {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      z-index: 0;
+      border: none;
+    }
+    .btn-gradient-hover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(
+        90deg,
+        #B31942,
+        #7b2d8b,
+        #3a0ca3,
+        #0A3161,
+        #7b2d8b,
+        #B31942,
+        #7b2d8b,
+        #3a0ca3
+      );
+      background-size: 300% 100%;
+      animation: gradientShift 2.5s linear infinite;
+    }
+    .btn-gradient-hover:hover::before {
+      animation-play-state: paused;
+    }
+    @keyframes gradientShift {
+      0%   { background-position: 100% 0%; }
+      100% { background-position: 0% 0%; }
+    }
+
     @media (max-width: 768px) {
       .hero { padding: 5rem 0 4rem; }
       .hero h1 { font-size: 2.4rem; }
@@ -314,7 +349,7 @@
         <h1 id="hero-heading">আপনার নিজের ছন্দে, <em>ধাপে ধাপে</em> ইংরেজি শিখুন</h1>
         <p>ফাটাফাটি আপনাকে একটি সাজানো কারিকুলামের মাধ্যমে এগিয়ে নিয়ে যাবে—প্রাথমিক ধাপ থেকে শুরু করে সাবলীলভাবে কথা বলা পর্যন্ত। এখানে থাকছে স্পষ্ট মাইলস্টোন, আকর্ষণীয় লেসন এবং আপনার দক্ষতা যাচাইয়ের জন্য কুইজ।</p>
         <div class="hero-cta">
-          <a href="/learn.html" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> লেসনগুলো দেখুন</a>
+          <a href="/learn.html" class="btn btn-primary btn-gradient-hover"><i class="fa-solid fa-arrow-right"></i> লেসনগুলো দেখুন</a>
           <a href="#how-it-works" class="btn btn-outline" style="color:var(--white);border-color:rgba(255,255,255,0.4);">এটি কীভাবে কাজ করে?</a>
         </div>
       </div>
@@ -380,7 +415,7 @@
     <div class="container">
       <h2 id="cta-heading">ইংরেজি শেখার যাত্রা শুরু করতে আপনি কি প্রস্তুত?</h2>
       <p>কোনো অ্যাকাউন্ট ছাড়াই আমাদের সম্পূর্ণ কারিকুলাম এবং লেসনগুলো একবার দেখে নিন।</p>
-      <a href="/learn.html" class="btn btn-primary" style="font-size:1.05rem;padding:0.85rem 2rem;">
+      <a href="/learn.html" class="btn btn-primary btn-gradient-hover" style="font-size:1.05rem;padding:0.85rem 2rem;">
         <i class="fa-solid fa-book-open"></i> সব লেসনগুলো দেখুন
       </a>
     </div>

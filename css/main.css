@@ -111,9 +111,9 @@ img { max-width: 100%; display: block; }
 .btn-primary {
   background: var(--red);
   color: var(--white);
-  border-color: var(--red);
+  border-color: transparent;
 }
-.btn-primary:hover { background: #97152f; border-color: #97152f; color: var(--white); }
+.btn-primary:hover { background: #97152f; border-color: transparent; color: var(--white); }
 
 .btn-outline {
   background: transparent;
