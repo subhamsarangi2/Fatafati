@@ -20,7 +20,7 @@ async function getUser() {
 async function requireAuth() {
   const user = await getUser();
   if (!user) {
-    window.location.href = '?login=1';
+    window.location.href = '/Fatafati/?login=1';
     return null;
   }
   return user;

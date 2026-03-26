@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   updateNavAuth(user);
 
   if (!user) {
-    window.location.href = '?login=1';
+    window.location.href = '/Fatafati/?login=1';
     return;
   }
 
