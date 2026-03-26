@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   } else if (slug) {
     await loadTopic();
   } else {
-    window.location.href = '/learn.html';
+    window.location.href = 'learn.html';
   }
 });
 
