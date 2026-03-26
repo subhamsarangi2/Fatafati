@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse All Lessons – Fatafati</title>
+  <meta name="description" content="Explore all Fatafati milestones and topics. Browse the full English learning curriculum — no account required." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://fatafati.com/learn" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fatafati.com/learn" />
+  <meta property="og:title" content="Browse All Lessons – Fatafati" />
+  <meta property="og:description" content="Explore milestones and topics in the Fatafati curriculum." />
+  <meta property="og:image" content="https://fatafati.com/assets/og/og-default.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Browse All Lessons – Fatafati" />
+  <meta name="twitter:description" content="Explore milestones and topics in the Fatafati curriculum." />
+  <meta name="twitter:image" content="https://fatafati.com/assets/og/og-default.jpg" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0A3161" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Fatafati" />
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+  <link rel="icon" href="/assets/icons/favicon.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <style>
+    .milestone-section { margin-bottom: 4rem; }
+    .milestone-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .milestone-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      color: var(--red);
+      line-height: 1;
+      min-width: 3.5rem;
+    }
+    .milestone-info h2 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .milestone-info p { color: var(--grey); font-size: 0.95rem; }
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .topic-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .topic-card:hover {
+      box-shadow: 0 6px 24px rgba(10,49,97,0.12);
+      transform: translateY(-2px);
+      color: inherit;
+    }
+    .topic-card.locked {
+      opacity: 0.55;
+      pointer-events: none;
+      cursor: default;
+    }
+    .topic-card .topic-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--blue);
+    }
+    .topic-card .topic-desc {
+      font-size: 0.9rem;
+      color: var(--grey);
+      line-height: 1.55;
+    }
+    .topic-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+    }
+    .topic-status {
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .status-unlocked { color: #16a34a; }
+    .status-locked { color: var(--grey); }
+    .status-passed { color: var(--blue); }
+    .milestone-test-banner {
+      background: var(--blue);
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 1.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .milestone-test-banner h4 { color: var(--white); font-size: 1rem; margin-bottom: 0.25rem; }
+    .milestone-test-banner p { color: rgba(255,255,255,0.7); font-size: 0.88rem; }
+    .learn-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 3rem;
+      padding: 4rem 0;
+    }
+    .learn-sidebar-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      position: sticky;
+      top: 90px;
+    }
+    .learn-sidebar-card h3 { font-size: 1.1rem; margin-bottom: 1.25rem; }
+    .progress-stat { margin-bottom: 1.25rem; }
+    .progress-stat-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      color: var(--grey);
+      margin-bottom: 0.4rem;
+    }
+    @media (max-width: 900px) {
+      .learn-layout { grid-template-columns: 1fr; }
+      .learn-sidebar-card { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a href="/" class="logo">
+      <img src="/assets/logo.png" alt="Fatafati" class="logo-img" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="/learn.html" class="active">Browse Lessons</a></li>
+      <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;">
+        <li><a href="/?login=1" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
+      </ul>
+    </ul>
+    <button class="btn btn-install" id="install-btn"><i class="fa-solid fa-download"></i> Install App</button>
+    <button class="hamburger" id="hamburger-btn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
+  <div class="mobile-menu-panel">
+    <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    <a href="/learn.html"><i class="fa-solid fa-book-open"></i> Browse Lessons</a>
+    <div class="mobile-menu-divider"></div>
+    <div id="mobile-auth-nav"></div>
+  </div>
+</div>
+
+<header class="page-header">
+  <div class="container">
+    <h1>All Lessons</h1>
+    <p>Browse the complete Fatafati curriculum. Sign in to track your progress and take quizzes.</p>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <div class="learn-layout">
+      <section aria-label="Lesson content">
+        <div id="curriculum-container">
+          <div class="spinner"></div>
+        </div>
+      </section>
+
+      <aside>
+        <div class="learn-sidebar-card">
+          <h3>Your Progress</h3>
+          <div id="progress-section">
+            <p class="text-muted" style="font-size:0.9rem;">Sign in to track your progress across milestones and topics.</p>
+            <a href="/?login=1" class="btn btn-primary w-100 mt-3" style="justify-content:center;">Sign In</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <a href="/" class="logo footer-logo">
+        <img src="/assets/logo.png" alt="Fatafati" class="logo-img" style="height:32px;" />
+      </a>
+      <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; 2025 Fatafati</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/supabase-client.js"></script>
+<script src="/js/pwa.js"></script>
+<script src="/js/learn.js"></script>
+</body>
+</html>

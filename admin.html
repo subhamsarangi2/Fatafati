@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – Fatafati</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0A3161" />
+  <link rel="icon" href="/assets/icons/favicon.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+
+<nav class="navbar" role="navigation">
+  <div class="container">
+    <a href="/" class="logo">
+      <img src="/assets/logo.png" alt="Fatafati" class="logo-img" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="/learn.html">Browse Lessons</a></li>
+      <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;"></ul>
+    </ul>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <nav class="admin-sidebar" aria-label="Admin navigation">
+    <h2>Admin Panel</h2>
+    <ul class="sidebar-nav">
+      <li><a href="#" class="active" data-view="dashboard"><i class="fa-solid fa-chart-bar"></i> Dashboard</a></li>
+      <li><a href="#" data-view="curriculum"><i class="fa-solid fa-sitemap"></i> Import Curriculum</a></li>
+      <li><a href="#" data-view="milestones"><i class="fa-solid fa-layer-group"></i> Milestones</a></li>
+      <li><a href="#" data-view="topics"><i class="fa-solid fa-book"></i> Topics</a></li>
+      <li><a href="#" data-view="attempts"><i class="fa-solid fa-list-check"></i> Test Attempts</a></li>
+    </ul>
+  </nav>
+
+  <main class="admin-main" id="admin-main">
+    <div class="spinner"></div>
+  </main>
+</div>
+
+<!-- Topic preview modal -->
+<div class="modal-overlay" id="topic-preview-modal">
+  <div class="modal" style="max-width:720px;width:95%;max-height:85vh;overflow-y:auto;position:relative;">
+    <button class="modal-close" id="topic-preview-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <div id="topic-preview-body"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="/js/supabase-client.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>
