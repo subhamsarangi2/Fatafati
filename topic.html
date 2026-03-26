@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson – Fatafati</title>
+  <meta name="robots" content="index, follow" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0A3161" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Fatafati" />
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+  <link rel="icon" href="/assets/icons/favicon.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <style>
+    .topic-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 3rem;
+      padding: 4rem 0;
+    }
+    .lesson-body {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3rem;
+      line-height: 1.8;
+    }
+    .lesson-body h1, .lesson-body h2, .lesson-body h3 { margin: 2rem 0 1rem; }
+    .lesson-body p { margin-bottom: 1.25rem; }
+    .lesson-body ul, .lesson-body ol { padding-left: 2rem; margin-bottom: 1.25rem; }
+    .lesson-body li { margin-bottom: 0.4rem; }
+    .lesson-body strong { color: var(--blue); }
+    .lesson-body em { font-style: italic; color: var(--red); }
+    .lesson-body code {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.15em 0.45em;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88em;
+    }
+
+    .topic-sidebar { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .quiz-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+    }
+    .quiz-section h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+
+    .question-block { margin-bottom: 2.5rem; }
+    .question-text {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 1.25rem;
+      color: var(--blue);
+      line-height: 1.5;
+    }
+    .options { display: flex; flex-direction: column; gap: 0.75rem; }
+    .option-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 1rem 1.25rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .option-label:hover { border-color: var(--blue); background: #f5f8ff; }
+    .option-label input { margin-top: 0.2rem; accent-color: var(--blue); }
+    .option-label.correct { border-color: #16a34a; background: #f0fdf4; }
+    .option-label.wrong { border-color: var(--red); background: #fff1f2; }
+
+    .quiz-progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--grey);
+      margin-bottom: 1.75rem;
+    }
+    .wrong-counter { color: var(--red); font-weight: 600; }
+
+    .result-banner {
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+    .result-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .result-title { font-size: 1.6rem; margin-bottom: 0.75rem; }
+    .result-pass .result-icon { color: #16a34a; }
+    .result-fail .result-icon { color: var(--red); }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      color: var(--grey);
+      margin-bottom: 2rem;
+    }
+    .breadcrumb a { color: var(--grey); }
+    .breadcrumb a:hover { color: var(--blue); }
+    .breadcrumb i { font-size: 0.7rem; }
+
+    @media (max-width: 900px) {
+      .topic-layout { grid-template-columns: 1fr; }
+      .topic-sidebar { position: static; }
+      .lesson-body { padding: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" role="navigation">
+  <div class="container">
+    <a href="/" class="logo">
+      <img src="/assets/logo.png" alt="Fatafati" class="logo-img" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="/learn.html">Browse Lessons</a></li>
+      <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;"></ul>
+    </ul>
+    <button class="btn btn-install" id="install-btn"><i class="fa-solid fa-download"></i> Install App</button>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <div id="page-content">
+      <div style="padding:4rem 0;"><div class="spinner"></div></div>
+    </div>
+  </div>
+</main>
+
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <a href="/" class="logo footer-logo">
+        <img src="/assets/logo.png" alt="Fatafati" class="logo-img" style="height:32px;" />
+      </a>
+      <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; 2025 Fatafati</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="/js/supabase-client.js"></script>
+<script src="/js/pwa.js"></script>
+<script src="/js/topic.js"></script>
+</body>
+</html>

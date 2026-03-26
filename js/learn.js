@@ -1,0 +1,118 @@
+$(async function () {
+  const user = await getUser();
+  updateNavAuth(user);
+
+  let progress = null;
+  if (user) {
+    progress = await getUserProgress(user.id);
+    renderProgressSidebar(progress);
+  }
+
+  const { data: milestones, error } = await supabase
+    .from('milestones')
+    .select('*, topics(id, title, slug, description, order_index)')
+    .order('order_index');
+
+  if (error || !milestones) {
+    document.getElementById('curriculum-container').innerHTML =
+      '<div class="alert alert-error">Failed to load lessons. Please try again.</div>';
+    return;
+  }
+
+  const unlockedTopics = progress?.unlocked_topics ?? [];
+  const unlockedMilestones = progress?.unlocked_milestones ?? [];
+
+  let html = '';
+  milestones.forEach((ms, i) => {
+    const msUnlocked = i === 0 || unlockedMilestones.includes(ms.id);
+    const topics = (ms.topics || []).sort((a, b) => a.order_index - b.order_index);
+    const passedTopics = topics.filter(t => unlockedTopics.includes(t.id)).length;
+
+    html += `
+      <section class="milestone-section">
+        <div class="milestone-header">
+          <div class="milestone-number">${String(i + 1).padStart(2, '0')}</div>
+          <div class="milestone-info">
+            <h2>${ms.title}</h2>
+            <p>${ms.description || ''}</p>
+            ${user && topics.length ? `
+              <div style="margin-top:0.75rem;">
+                <div style="display:flex;justify-content:space-between;font-size:0.82rem;color:var(--grey);margin-bottom:0.35rem;">
+                  <span>Topics completed</span><span>${passedTopics} / ${topics.length}</span>
+                </div>
+                <div class="progress-wrap"><div class="progress-bar" style="width:${topics.length ? Math.round(passedTopics / topics.length * 100) : 0}%"></div></div>
+              </div>` : ''}
+          </div>
+        </div>
+        <div class="topics-grid">
+    `;
+
+    topics.forEach((topic, ti) => {
+      const isFirstInMs = ti === 0;
+      const prevPassed = ti > 0 && unlockedTopics.includes(topics[ti - 1].id);
+      const unlocked = !user || msUnlocked && (isFirstInMs || prevPassed || unlockedTopics.includes(topic.id));
+      const passed = unlockedTopics.includes(topic.id);
+
+      const statusIcon = passed
+        ? `<span class="topic-status status-passed"><i class="fa-solid fa-circle-check"></i> Completed</span>`
+        : unlocked
+          ? `<span class="topic-status status-unlocked"><i class="fa-solid fa-lock-open"></i> Available</span>`
+          : `<span class="topic-status status-locked"><i class="fa-solid fa-lock"></i> Locked</span>`;
+
+      html += `
+        <a href="/topic.html?slug=${topic.slug}" class="topic-card ${!unlocked && user ? 'locked' : ''}">
+          <div class="topic-title">${topic.title}</div>
+          <div class="topic-desc">${topic.description || ''}</div>
+          <div class="topic-meta">
+            ${statusIcon}
+            <span style="font-size:0.8rem;color:var(--grey);"><i class="fa-regular fa-circle-question"></i> 10 questions</span>
+          </div>
+        </a>
+      `;
+    });
+
+    html += '</div>';
+
+    if (topics.length > 0) {
+      const allPassed = topics.every(t => unlockedTopics.includes(t.id));
+      const msPassed = unlockedMilestones.includes(ms.id);
+      html += `
+        <div class="milestone-test-banner">
+          <div>
+            <h4><i class="fa-solid fa-graduation-cap"></i> Milestone ${i + 1} Test</h4>
+            <p>25 questions — complete all topics first to unlock</p>
+          </div>
+          ${user && allPassed && !msPassed
+            ? `<a href="/topic.html?milestone=${ms.id}" class="btn btn-primary" style="white-space:nowrap;">Take Test</a>`
+            : msPassed
+              ? `<span style="color:#7dd3b0;font-size:0.9rem;"><i class="fa-solid fa-circle-check"></i> Passed</span>`
+              : `<span style="font-size:0.85rem;opacity:0.6;"><i class="fa-solid fa-lock"></i> Locked</span>`
+          }
+        </div>
+      `;
+    }
+
+    html += '</section>';
+  });
+
+  document.getElementById('curriculum-container').innerHTML = html;
+});
+
+function renderProgressSidebar(progress) {
+  if (!progress) return;
+  const unlocked = (progress.unlocked_topics || []).length;
+  const milestones = (progress.unlocked_milestones || []).length;
+  document.getElementById('progress-section').innerHTML = `
+    <div class="progress-stat">
+      <div class="progress-stat-label"><span>Topics completed</span><span>${unlocked}</span></div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:${Math.min(unlocked * 5, 100)}%"></div></div>
+    </div>
+    <div class="progress-stat">
+      <div class="progress-stat-label"><span>Milestones unlocked</span><span>${milestones}</span></div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:${Math.min(milestones * 20, 100)}%"></div></div>
+    </div>
+    <a href="/profile.html" class="btn btn-outline w-100 mt-3" style="justify-content:center;font-size:0.9rem;">
+      <i class="fa-regular fa-user"></i> View Profile
+    </a>
+  `;
+}

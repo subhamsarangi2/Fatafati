@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Progress – Fatafati</title>
+  <meta name="robots" content="noindex" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0A3161" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Fatafati" />
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+  <link rel="icon" href="/assets/icons/favicon.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <style>
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 3rem;
+      padding: 4rem 0;
+    }
+    .profile-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      text-align: center;
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+    .avatar {
+      width: 80px; height: 80px;
+      background: var(--blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 2rem;
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+    }
+    .profile-email { color: var(--grey); font-size: 0.9rem; word-break: break-all; }
+    .milestone-level {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .level-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--grey); margin-bottom: 0.35rem; }
+    .level-value { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--red); }
+    .attempt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+    .attempt-row:last-child { border-bottom: none; }
+    .attempt-name { font-size: 0.95rem; font-weight: 600; }
+    .attempt-date { font-size: 0.82rem; color: var(--grey); }
+    .attempt-right { text-align: right; flex-shrink: 0; }
+    @media (max-width: 768px) {
+      .profile-layout { grid-template-columns: 1fr; }
+      .profile-card { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" role="navigation">
+  <div class="container">
+    <a href="/" class="logo">
+      <img src="/assets/logo.png" alt="Fatafati" class="logo-img" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="/learn.html">Browse Lessons</a></li>
+      <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;"></ul>
+    </ul>
+    <button class="btn btn-install" id="install-btn"><i class="fa-solid fa-download"></i> Install App</button>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="container">
+    <h1>My Progress</h1>
+    <p>Track your milestone level and review your test history.</p>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <div class="profile-layout">
+      <aside>
+        <div class="profile-card" id="profile-card">
+          <div class="spinner"></div>
+        </div>
+      </aside>
+      <section>
+        <h2 style="font-size:1.4rem;margin-bottom:1.75rem;">Test History</h2>
+        <div id="attempts-container"><div class="spinner"></div></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <a href="/" class="logo footer-logo">
+        <img src="/assets/logo.png" alt="Fatafati" class="logo-img" style="height:32px;" />
+      </a>
+      <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; 2025 Fatafati</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/supabase-client.js"></script>
+<script src="/js/pwa.js"></script>
+<script src="/js/profile.js"></script>
+</body>
+</html>

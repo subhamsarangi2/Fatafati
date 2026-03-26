@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fatafati – Learn English Step by Step</title>
+  <meta name="description" content="Fatafati offers structured English lessons organised into milestones and topics. Learn at your own pace with guided quizzes and progress tracking." />
+  <meta name="keywords" content="english learning, english lessons, learn english online, english course, english practice, structured english" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://fatafati.com/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fatafati.com/" />
+  <meta property="og:title" content="Fatafati – Learn English Step by Step" />
+  <meta property="og:description" content="Structured English lessons with milestone-based progression, quizzes, and progress tracking. Start learning today." />
+  <meta property="og:image" content="https://fatafati.com/assets/og/og-default.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fatafati – Learn English Step by Step" />
+  <meta name="twitter:description" content="Structured English lessons with milestone-based progression, quizzes, and progress tracking." />
+  <meta name="twitter:image" content="https://fatafati/assets/og/og-default.jpg" />
+
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0A3161" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Fatafati" />
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+  <link rel="icon" href="/assets/icons/favicon.ico" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "url": "https://fatafati.com/",
+        "name": "Fatafati",
+        "description": "Learn English step by step"
+      },
+      {
+        "@type": "LearningResource",
+        "url": "https://fatafati.com/",
+        "name": "Fatafati English Course",
+        "description": "Structured English lessons organised into milestones and topics with progress tracking.",
+        "educationalLevel": "Beginner to Advanced",
+        "inLanguage": "en",
+        "teaches": "English language"
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    .hero {
+      background: var(--blue);
+      color: var(--white);
+      padding: 7rem 0 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -80px;
+      width: 500px; height: 500px;
+      background: rgba(179,25,66,0.12);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -60px;
+      width: 380px; height: 380px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(179,25,66,0.2);
+      color: #ffb3b3;
+      padding: 0.35rem 1rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.75rem;
+    }
+    .hero h1 {
+      color: var(--white);
+      font-size: 3.5rem;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 em {
+      color: #ffb3b3;
+      font-style: italic;
+    }
+    .hero p {
+      color: rgba(255,255,255,0.78);
+      font-size: 1.2rem;
+      margin-bottom: 2.5rem;
+      max-width: 540px;
+      line-height: 1.65;
+    }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .how-it-works { padding: 6rem 0; }
+    .section-label {
+      color: var(--red);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+    .section-title { font-size: 2.2rem; margin-bottom: 1rem; }
+    .section-subtitle { color: var(--grey); font-size: 1.05rem; max-width: 520px; margin-bottom: 3.5rem; }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+    }
+    .step-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      position: relative;
+    }
+    .step-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 1.25rem;
+    }
+    .step-card h3 { font-size: 1.15rem; margin-bottom: 0.75rem; }
+    .step-card p { color: var(--grey); font-size: 0.95rem; line-height: 1.6; }
+
+    .features-section {
+      background: var(--blue);
+      padding: 6rem 0;
+      color: var(--white);
+    }
+    .features-section .section-title { color: var(--white); }
+    .features-section .section-subtitle { color: rgba(255,255,255,0.65); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+    .feature-item {
+      padding: 2.5rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+    }
+    .feature-icon {
+      width: 52px; height: 52px;
+      background: rgba(179,25,66,0.25);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: #ffb3b3;
+      font-size: 1.3rem;
+      margin-bottom: 1.25rem;
+    }
+    .feature-item h3 { color: var(--white); font-size: 1.1rem; margin-bottom: 0.6rem; }
+    .feature-item p { color: rgba(255,255,255,0.6); font-size: 0.93rem; line-height: 1.6; }
+
+    .cta-section {
+      padding: 6rem 0;
+      text-align: center;
+    }
+    .cta-section h2 { font-size: 2.4rem; margin-bottom: 1rem; }
+    .cta-section p { color: var(--grey); font-size: 1.05rem; margin-bottom: 2.5rem; }
+
+    .btn-spinner {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Password field wrapper */
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper .form-control {
+      padding-right: 2.75rem;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--grey, #6b7280);
+      padding: 0.25rem;
+      line-height: 1;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .password-toggle:hover {
+      color: var(--blue, #0A3161);
+    }
+
+    @media (max-width: 768px) {
+      .hero { padding: 5rem 0 4rem; }
+      .hero h1 { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a href="/" class="logo" aria-label="Fatafati home">
+      <img src="/assets/logo.png" alt="Fatafati" class="logo-img" />
+    </a>
+    <ul class="nav-links" id="main-nav">
+      <li><a href="/learn.html">Browse Lessons</a></li>
+      <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;">
+        <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
+      </ul>
+    </ul>
+    <button class="btn btn-install" id="install-btn" aria-label="Install Fatafati app">
+      <i class="fa-solid fa-download"></i> Install App
+    </button>
+  </div>
+</nav>
+
+<main>
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-eyebrow"><i class="fa-solid fa-star"></i> Structured Learning</div>
+        <h1 id="hero-heading">Learn English <em>step by step</em>, at your own pace</h1>
+        <p>Fatafati guides you through a structured curriculum — from the basics to fluency — with clear milestones, engaging lessons, and adaptive quizzes.</p>
+        <div class="hero-cta">
+          <a href="/learn.html" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> Browse Lessons</a>
+          <a href="#how-it-works" class="btn btn-outline" style="color:var(--white);border-color:rgba(255,255,255,0.4);">How it works</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how-it-works" aria-labelledby="how-heading">
+    <div class="container">
+      <div class="section-label">The Process</div>
+      <h2 class="section-title" id="how-heading">A clear path to English fluency</h2>
+      <p class="section-subtitle">Three simple steps stand between you and confident English communication.</p>
+      <div class="steps-grid">
+        <article class="step-card">
+          <div class="step-number">01</div>
+          <h3>Read your lesson</h3>
+          <p>Each topic contains a focused lesson with clear explanations and practical examples you can apply immediately.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-number">02</div>
+          <h3>Take the quiz</h3>
+          <p>Test your understanding with 10 multiple-choice questions. Pass to unlock the next topic in your milestone.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-number">03</div>
+          <h3>Reach milestones</h3>
+          <p>Complete all topics in a milestone, then pass the milestone test to level up and access advanced content.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section" aria-labelledby="features-heading">
+    <div class="container">
+      <div class="section-label" style="color:#ffb3b3;">Why Fatafati</div>
+      <h2 class="section-title" id="features-heading">Everything you need to succeed</h2>
+      <p class="section-subtitle">Built for self-paced learners who want structure without the rigidity.</p>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa-solid fa-layer-group"></i></div>
+          <h3>Structured curriculum</h3>
+          <p>Topics grouped into milestones with a logical learning progression from beginner to advanced.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa-solid fa-lock-open"></i></div>
+          <h3>Gated progression</h3>
+          <p>Topics unlock sequentially so you build on solid foundations before moving to harder material.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>Progress tracking</h3>
+          <p>Your profile records every test attempt and milestone so you can see exactly how far you've come.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+          <h3>Works offline</h3>
+          <p>Install Fatafati as an app on your phone or desktop and keep learning even without internet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section" aria-labelledby="cta-heading">
+    <div class="container">
+      <h2 id="cta-heading">Ready to start your English journey?</h2>
+      <p>Browse all lessons for free — no account needed to explore the curriculum.</p>
+      <a href="/learn.html" class="btn btn-primary" style="font-size:1.05rem;padding:0.85rem 2rem;">
+        <i class="fa-solid fa-book-open"></i> Explore All Lessons
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <a href="/" class="logo footer-logo">
+        <img src="/assets/logo.png" alt="Fatafati" class="logo-img" style="height:32px;" />
+      </a>
+      <nav aria-label="Footer navigation">
+        <a href="/learn.html" style="margin-right:1.5rem;">Browse Lessons</a>
+        <a href="/profile.html">My Progress</a>
+      </nav>
+      <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; 2026 Fatafati. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" id="close-auth" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <h2 class="modal-title" id="auth-modal-title">Sign in to Fatafati</h2>
+    <p class="text-muted mb-3">Track your progress and take quizzes.</p>
+    <div class="tab-nav" style="margin-bottom:2rem;">
+      <button class="tab-btn active" data-tab="login">Sign In</button>
+      <button class="tab-btn" data-tab="signup">Create Account</button>
+    </div>
+    <div id="auth-alert"></div>
+
+    <!-- Login Tab -->
+    <div id="tab-login">
+      <div class="form-group">
+        <label class="form-label" for="login-email">Email address</label>
+        <input type="email" id="login-email" class="form-control" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="login-password" class="form-control" placeholder="Your password" />
+          <button type="button" class="password-toggle" aria-label="Toggle password visibility" data-target="login-password">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-primary w-100" id="login-btn">
+        <span class="btn-text">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+        </span>
+        <span class="btn-spinner" style="display:none;">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        </span>
+      </button>
+    </div>
+
+    <!-- Signup Tab -->
+    <div id="tab-signup" style="display:none;">
+      <div class="form-group">
+        <label class="form-label" for="signup-email">Email address</label>
+        <input type="email" id="signup-email" class="form-control" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="signup-password">Choose a password</label>
+        <div class="password-wrapper">
+          <input type="password" id="signup-password" class="form-control" placeholder="At least 8 characters" />
+          <button type="button" class="password-toggle" aria-label="Toggle password visibility" data-target="signup-password">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-primary w-100" id="signup-btn">
+        <span class="btn-text">
+          <i class="fa-solid fa-user-plus"></i> Create Account
+        </span>
+        <span class="btn-spinner" style="display:none;">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/supabase-client.js"></script>
+<script src="/js/pwa.js"></script>
+<script>
+  (async () => {
+    const user = await getUser();
+    updateNavAuth(user);
+  })();
+
+  document.getElementById('close-auth').addEventListener('click', () => {
+    document.getElementById('auth-modal').classList.remove('open');
+  });
+  document.getElementById('auth-modal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-login').style.display = btn.dataset.tab === 'login' ? 'block' : 'none';
+      document.getElementById('tab-signup').style.display = btn.dataset.tab === 'signup' ? 'block' : 'none';
+      document.getElementById('auth-alert').innerHTML = '';
+    });
+  });
+
+  // Password visibility toggles
+  document.querySelectorAll('.password-toggle').forEach(toggleBtn => {
+    toggleBtn.addEventListener('click', () => {
+      const input = document.getElementById(toggleBtn.dataset.target);
+      const icon = toggleBtn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+        toggleBtn.setAttribute('aria-label', 'Hide password');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+        toggleBtn.setAttribute('aria-label', 'Show password');
+      }
+    });
+  });
+
+  function showAuthAlert(msg, type = 'error') {
+    document.getElementById('auth-alert').innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  }
+
+  function setLoading(btn, isLoading) {
+    const text = btn.querySelector('.btn-text');
+    const spinner = btn.querySelector('.btn-spinner');
+    if (isLoading) {
+      btn.disabled = true;
+      text.style.display = 'none';
+      spinner.style.display = 'inline-flex';
+    } else {
+      btn.disabled = false;
+      text.style.display = 'inline-flex';
+      spinner.style.display = 'none';
+    }
+  }
+
+  function getErrorMessage(error) {
+    if (!error) return 'Something went wrong.';
+    if (error.message) return error.message;
+    return 'Unexpected error occurred. Please try again.';
+  }
+
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const btn = document.getElementById('login-btn');
+
+    if (!email || !password) {
+      return showAuthAlert('Please fill in all fields.');
+    }
+
+    try {
+      setLoading(btn, true);
+      const { error } = await signIn(email, password);
+      if (error) throw error;
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      showAuthAlert(getErrorMessage(err));
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+
+  document.getElementById('signup-btn').addEventListener('click', async () => {
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const btn = document.getElementById('signup-btn');
+
+    if (!email || !password) {
+      return showAuthAlert('Please fill in all fields.');
+    }
+
+    if (password.length < 8) {
+      return showAuthAlert('Password must be at least 8 characters.');
+    }
+
+    try {
+      setLoading(btn, true);
+      const { error } = await signUp(email, password);
+      if (error) throw error;
+      showAuthAlert('Account created! Check your email to confirm.', 'success');
+    } catch (err) {
+      console.error(err);
+      if (err.message?.includes('network')) {
+        showAuthAlert('Network error. Check your connection.');
+      } else {
+        showAuthAlert(getErrorMessage(err));
+      }
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+
+  if (window.location.search.includes('login=1')) {
+    document.getElementById('auth-modal').classList.add('open');
+  }
+</script>
+</body>
+</html>
