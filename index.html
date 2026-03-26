@@ -516,6 +516,14 @@
     if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
   });
 
+  // Delegated listener so Sign In works whether button is static or injected by updateNavAuth
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#open-login')) {
+      e.preventDefault();
+      document.getElementById('auth-modal').classList.add('open');
+    }
+  });
+
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
