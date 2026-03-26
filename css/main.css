@@ -22,6 +22,12 @@ body {
   font-size: 17px;
   line-height: 1.8;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -152,10 +158,11 @@ img { max-width: 100%; display: block; }
 .card {
   background: var(--white);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: 2rem;
   box-shadow: var(--shadow);
   transition: box-shadow 0.2s, transform 0.2s;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
 }
 .card:hover { box-shadow: 0 6px 28px rgba(10,49,97,0.13); transform: translateY(-2px); }
 
@@ -218,9 +225,11 @@ img { max-width: 100%; display: block; }
 footer {
   background: var(--blue);
   color: rgba(255,255,255,0.7);
-  padding: 3rem 0;
-  margin-top: 6rem;
+  padding: 5rem 0 3rem;
+  margin-top: 0;
   font-size: 0.9rem;
+  position: relative;
+  clip-path: ellipse(120% 100% at 50% 100%);
 }
 footer a { color: rgba(255,255,255,0.7); }
 footer a:hover { color: var(--white); }

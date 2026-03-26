@@ -138,9 +138,10 @@
     .step-card {
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: 0;
       padding: 2.5rem;
       position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
     }
     .step-number {
       font-family: 'Playfair Display', serif;
@@ -168,12 +169,14 @@
       padding: 2.5rem;
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.1);
-      border-radius: var(--radius);
+      border-radius: 0;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
     }
     .feature-icon {
       width: 52px; height: 52px;
       background: rgba(179,25,66,0.25);
-      border-radius: 12px;
+      border-radius: 0;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
       display: flex; align-items: center; justify-content: center;
       color: #ffb3b3;
       font-size: 1.3rem;
@@ -226,6 +229,49 @@
       .hero { padding: 5rem 0 4rem; }
       .hero h1 { font-size: 2.4rem; }
     }
+
+    /* ── Flip heading effect ── */
+    .flip-heading {
+      display: block;
+      cursor: default;
+    }
+    .flip-heading .flip-word {
+      display: inline-flex;
+      vertical-align: top;
+      margin-right: 0.25em;
+    }
+    .flip-heading .flip-char {
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      height: 1.4em;
+      line-height: 1.4em;
+      vertical-align: top;
+    }
+    .flip-heading .flip-char .char-top,
+    .flip-heading .flip-char .char-bottom {
+      display: block;
+      height: 1.4em;
+      line-height: 1.4em;
+      white-space: pre;
+      transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    .flip-heading .flip-char .char-bottom {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      transform: translateY(101%);
+    }
+    .step-card:hover .flip-char .char-top,
+    .feature-item:hover .flip-char .char-top {
+      transform: translateY(-101%);
+    }
+    .step-card:hover .flip-char .char-bottom,
+    .feature-item:hover .flip-char .char-bottom {
+      transform: translateY(0%);
+    }
+    .step-card .flip-char .char-bottom { color: #B31942; }
+    .feature-item .flip-char .char-bottom { color: #ffffff; }
   </style>
 </head>
 <body>
@@ -236,13 +282,13 @@
       <img src="/assets/logo.png" alt="Fatafati" class="logo-img" />
     </a>
     <ul class="nav-links" id="main-nav">
-      <li><a href="/learn.html">লেসনগুলো দেখুন</a></li>
+      <li><a href="/learn.html">Browse Lessons</a></li>
       <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;">
-        <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">সাইন ইন</a></li>
+        <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
       </ul>
     </ul>
     <button class="btn btn-install" id="install-btn" aria-label="Install Fatafati app">
-      <i class="fa-solid fa-download"></i> অ্যাপ ইনস্টল করুন
+      <i class="fa-solid fa-download"></i> Install App
     </button>
     <button class="hamburger" id="hamburger-btn" aria-label="Open menu">
       <i class="fa-solid fa-bars"></i>
@@ -254,7 +300,7 @@
   <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
   <div class="mobile-menu-panel">
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
-    <a href="/learn.html"><i class="fa-solid fa-book-open"></i> লেসনগুলো দেখুন</a>
+    <a href="/learn.html"><i class="fa-solid fa-book-open"></i> Browse Lessons</a>
     <div class="mobile-menu-divider"></div>
     <div id="mobile-auth-nav"></div>
   </div>
@@ -283,17 +329,17 @@
       <div class="steps-grid">
         <article class="step-card">
           <div class="step-number">01</div>
-          <h3>আপনার লেসন পড়ুন</h3>
+          <h3 class="flip-heading">আপনার লেসন পড়ুন</h3>
           <p>প্রতিটি টপিকে থাকছে নির্দিষ্ট লেসন, যা সহজ ব্যাখ্যা এবং বাস্তব উদাহরণের মাধ্যমে আপনার শেখাকে আনন্দদায়ক করবে।</p>
         </article>
         <article class="step-card">
           <div class="step-number">02</div>
-          <h3>কুইজে অংশ নিন</h3>
+          <h3 class="flip-heading">কুইজে অংশ নিন</h3>
           <p>১০টি মাল্টিপল চয়েস প্রশ্নের মাধ্যমে নিজের দক্ষতা যাচাই করুন। সফলভাবে পাস করলে আপনার পরবর্তী টপিকটি আনলক হবে।</p>
         </article>
         <article class="step-card">
           <div class="step-number">03</div>
-          <h3>মাইলস্টোন অর্জন করুন</h3>
+          <h3 class="flip-heading">মাইলস্টোন অর্জন করুন</h3>
           <p>একটি মাইলস্টোনের সব টপিক শেষ করার পর মাইলস্টোন টেস্টে উত্তীর্ণ হয়ে আপনার লেভেল আরও উন্নত করুন।</p>
         </article>
       </div>
@@ -308,22 +354,22 @@
       <div class="features-grid">
         <div class="feature-item">
           <div class="feature-icon"><i class="fa-solid fa-layer-group"></i></div>
-          <h3>সাজানো কারিকুলাম</h3>
+          <h3 class="flip-heading">সাজানো কারিকুলাম</h3>
           <p>টপিকগুলো মাইলস্টোনের মাধ্যমে ধারাবাহিকভাবে সাজানো হয়েছে।</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon"><i class="fa-solid fa-lock-open"></i></div>
-          <h3>ধাপে ধাপে অগ্রগতি</h3>
+          <h3 class="flip-heading">ধাপে ধাপে অগ্রগতি</h3>
           <p>একটি টপিক শেষ করার পর পরেরটি আনলক হবে, যাতে আপনার গ্রামার এবং ফাউন্ডেশন মজবুত থাকে।</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
-          <h3>প্রোগ্রেস ট্র্যাকিং</h3>
+          <h3 class="flip-heading">প্রোগ্রেস ট্র্যাকিং</h3>
           <p>আপনার প্রোফাইলে প্রতিটি টেস্ট এবং মাইলস্টোনের ফলাফল সংরক্ষিত থাকবে।</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon"><i class="fa-solid fa-mobile-screen"></i></div>
-          <h3>অফলাইনেও কার্যকর</h3>
+          <h3 class="flip-heading">অফলাইনেও কার্যকর</h3>
           <p>এটি অ্যাপ হিসেবে ইনস্টল করে নিন এবং ইন্টারনেট ছাড়াও আপনার পড়াশোনা চালিয়ে যান।</p>
         </div>
       </div>
@@ -541,6 +587,53 @@
   if (window.location.search.includes('login=1')) {
     document.getElementById('auth-modal').classList.add('open');
   }
+
+  // ── Flip heading character splitter ──
+  const segmenter = new Intl.Segmenter('bn', { granularity: 'grapheme' });
+
+  function splitFlipHeading(el) {
+    const text = el.textContent;
+    const graphemes = [...segmenter.segment(text)].map(s => s.segment);
+    el.innerHTML = '';
+
+    let wordEl = document.createElement('span');
+    wordEl.className = 'flip-word';
+    let charIndex = 0;
+
+    graphemes.forEach((char) => {
+      if (char === ' ') {
+        el.appendChild(wordEl);
+        const space = document.createElement('span');
+        space.style.display = 'inline-block';
+        space.style.width = '0.3em';
+        el.appendChild(space);
+        wordEl = document.createElement('span');
+        wordEl.className = 'flip-word';
+        return;
+      }
+
+      const charEl = document.createElement('span');
+      charEl.className = 'flip-char';
+      charEl.style.transitionDelay = `${charIndex * 0.03}s`;
+
+      const top = document.createElement('span');
+      top.className = 'char-top';
+      top.textContent = char;
+
+      const bottom = document.createElement('span');
+      bottom.className = 'char-bottom';
+      bottom.textContent = char;
+
+      charEl.appendChild(top);
+      charEl.appendChild(bottom);
+      wordEl.appendChild(charEl);
+      charIndex++;
+    });
+
+    el.appendChild(wordEl);
+  }
+
+  document.querySelectorAll('.flip-heading').forEach(splitFlipHeading);
 </script>
 </body>
 </html>
