@@ -77,7 +77,7 @@ async function updateNavAuth(user) {
       isAdmin = data?.role === 'admin';
     }
     authNav.innerHTML = `
-      ${isAdmin ? `<li><a href="/admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>` : `<li><a href="/profile.html"><i class="fa-regular fa-user"></i> Profile</a></li>`}
+      ${isAdmin ? `<li><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>` : `<li><a href="profile.html"><i class="fa-regular fa-user"></i> Profile</a></li>`}
       <li><a href="#" onclick="signOut();return false;" class="btn btn-outline btn-sm" style="padding:0.4rem 1rem;">Sign Out</a></li>
     `;
   } else {

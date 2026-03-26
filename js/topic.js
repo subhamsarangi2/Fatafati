@@ -51,9 +51,9 @@ async function loadTopic() {
   const ms = topic.milestones;
   const breadcrumb = `
     <div class="breadcrumb">
-      <a href="/learn.html">Lessons</a>
+      <a href="learn.html">Lessons</a>
       <i class="fa-solid fa-chevron-right"></i>
-      <a href="/learn.html">${ms?.title ?? 'Milestone'}</a>
+      <a href="learn.html">${ms?.title ?? 'Milestone'}</a>
       <i class="fa-solid fa-chevron-right"></i>
       <span>${topic.title}</span>
     </div>
@@ -122,7 +122,7 @@ async function loadMilestoneTest() {
 
   const breadcrumb = `
     <div class="breadcrumb">
-      <a href="/learn.html">Lessons</a>
+      <a href="learn.html">Lessons</a>
       <i class="fa-solid fa-chevron-right"></i>
       <span>${ms.title} Test</span>
     </div>
@@ -281,8 +281,8 @@ async function recordAttempt(passed, type) {
 function showResult(passed, type) {
   document.getElementById('questions-container').style.display = 'none';
   const nextLink = type === 'topic'
-    ? `<a href="/learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-arrow-right"></i> Back to Lessons</a>`
-    : `<a href="/learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-trophy"></i> See Next Milestone</a>`;
+    ? `<a href="learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-arrow-right"></i> Back to Lessons</a>`
+    : `<a href="learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-trophy"></i> See Next Milestone</a>`;
 
   const result = document.getElementById('quiz-result');
   result.innerHTML = `

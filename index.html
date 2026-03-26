@@ -21,7 +21,7 @@
   <meta name="twitter:description" content="মাইলস্টোনভিত্তিক সাজানো লেসন, কুইজ এবং প্রোগ্রেস ট্র্যাকিং সহ ইংরেজি শিখুন।" />
   <meta name="twitter:image" content="https://fatafati/assets/og/og-default.jpg" />
 
-  <link rel="manifest" href="/manifest.json" />
+  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0A3161" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -313,11 +313,11 @@
 
 <nav class="navbar" role="navigation" aria-label="Main navigation">
   <div class="container">
-    <a href="/" class="logo" aria-label="Fatafati home">
+    <a href="" class="logo" aria-label="Fatafati home">
       <img src="assets/logo.png" alt="Fatafati" class="logo-img" />
     </a>
     <ul class="nav-links" id="main-nav">
-      <li><a href="/learn.html">Browse Lessons</a></li>
+      <li><a href="learn.html">Browse Lessons</a></li>
       <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;">
         <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
       </ul>
@@ -335,7 +335,7 @@
   <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
   <div class="mobile-menu-panel">
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
-    <a href="/learn.html"><i class="fa-solid fa-book-open"></i> Browse Lessons</a>
+    <a href="learn.html"><i class="fa-solid fa-book-open"></i> Browse Lessons</a>
     <div class="mobile-menu-divider"></div>
     <div id="mobile-auth-nav"></div>
   </div>
@@ -349,7 +349,7 @@
         <h1 id="hero-heading">আপনার নিজের ছন্দে, <em>ধাপে ধাপে</em> ইংরেজি শিখুন</h1>
         <p>ফাটাফাটি আপনাকে একটি সাজানো কারিকুলামের মাধ্যমে এগিয়ে নিয়ে যাবে—প্রাথমিক ধাপ থেকে শুরু করে সাবলীলভাবে কথা বলা পর্যন্ত। এখানে থাকছে স্পষ্ট মাইলস্টোন, আকর্ষণীয় লেসন এবং আপনার দক্ষতা যাচাইয়ের জন্য কুইজ।</p>
         <div class="hero-cta">
-          <a href="/learn.html" class="btn btn-primary btn-gradient-hover"><i class="fa-solid fa-arrow-right"></i> লেসনগুলো দেখুন</a>
+          <a href="learn.html" class="btn btn-primary btn-gradient-hover"><i class="fa-solid fa-arrow-right"></i> লেসনগুলো দেখুন</a>
           <a href="#how-it-works" class="btn btn-outline" style="color:var(--white);border-color:rgba(255,255,255,0.4);">এটি কীভাবে কাজ করে?</a>
         </div>
       </div>
@@ -415,7 +415,7 @@
     <div class="container">
       <h2 id="cta-heading">ইংরেজি শেখার যাত্রা শুরু করতে আপনি কি প্রস্তুত?</h2>
       <p>কোনো অ্যাকাউন্ট ছাড়াই আমাদের সম্পূর্ণ কারিকুলাম এবং লেসনগুলো একবার দেখে নিন।</p>
-      <a href="/learn.html" class="btn btn-primary btn-gradient-hover" style="font-size:1.05rem;padding:0.85rem 2rem;">
+      <a href="learn.html" class="btn btn-primary btn-gradient-hover" style="font-size:1.05rem;padding:0.85rem 2rem;">
         <i class="fa-solid fa-book-open"></i> সব লেসনগুলো দেখুন
       </a>
     </div>
@@ -425,12 +425,12 @@
 <footer role="contentinfo">
   <div class="container">
     <div class="footer-inner">
-      <a href="/" class="logo footer-logo">
+      <a href="" class="logo footer-logo">
         <img src="assets/logo.png" alt="Fatafati" class="logo-img" style="height:32px;" />
       </a>
       <nav aria-label="Footer navigation">
-        <a href="/learn.html" style="margin-right:1.5rem;">লেসনগুলো দেখুন</a>
-        <a href="/profile.html">আমার প্রোগ্রেস</a>
+        <a href="learn.html" style="margin-right:1.5rem;">লেসনগুলো দেখুন</a>
+        <a href="profile.html">আমার প্রোগ্রেস</a>
       </nav>
       <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; 2026 Fatafati. All rights reserved.</p>
     </div>
@@ -501,8 +501,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="/js/supabase-client.js"></script>
-<script src="/js/pwa.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/pwa.js"></script>
 <script>
   (async () => {
     const user = await getUser();
