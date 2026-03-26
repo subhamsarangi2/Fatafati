@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         <div style="font-size:0.82rem;color:var(--grey);margin-top:0.3rem;">${milestoneCount} milestones</div>
       </div>
     </div>
-    <a href="/learn.html" class="btn btn-primary w-100 mt-4" style="justify-content:center;">
+    <a href="learn.html" class="btn btn-primary w-100 mt-4" style="justify-content:center;">
       <i class="fa-solid fa-book-open"></i> Continue Learning
     </a>
     <button onclick="signOut()" class="btn btn-outline w-100 mt-2" style="justify-content:center;">
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       <div class="card" style="text-align:center;padding:3rem;">
         <i class="fa-regular fa-circle-question" style="font-size:2.5rem;color:var(--border);margin-bottom:1rem;"></i>
         <p class="text-muted">No test attempts yet. Start a lesson to take your first quiz.</p>
-        <a href="/learn.html" class="btn btn-primary mt-3">Browse Lessons</a>
+        <a href="learn.html" class="btn btn-primary mt-3">Browse Lessons</a>
       </div>
     `;
     return;

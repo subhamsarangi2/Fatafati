@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           : `<span class="topic-status status-locked"><i class="fa-solid fa-lock"></i> Locked</span>`;
 
       html += `
-        <a href="/topic.html?slug=${topic.slug}" class="topic-card ${!unlocked && user ? 'locked' : ''}">
+        <a href="topic.html?slug=${topic.slug}" class="topic-card ${!unlocked && user ? 'locked' : ''}">
           <div class="topic-title">${topic.title}</div>
           <div class="topic-desc">${topic.description || ''}</div>
           <div class="topic-meta">
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             <p>25 questions — complete all topics first to unlock</p>
           </div>
           ${user && allPassed && !msPassed
-            ? `<a href="/topic.html?milestone=${ms.id}" class="btn btn-primary" style="white-space:nowrap;">Take Test</a>`
+            ? `<a href="topic.html?milestone=${ms.id}" class="btn btn-primary" style="white-space:nowrap;">Take Test</a>`
             : msPassed
               ? `<span style="color:#7dd3b0;font-size:0.9rem;"><i class="fa-solid fa-circle-check"></i> Passed</span>`
               : `<span style="font-size:0.85rem;opacity:0.6;"><i class="fa-solid fa-lock"></i> Locked</span>`
@@ -117,7 +117,7 @@ function renderProgressSidebar(progress) {
       <div class="progress-stat-label"><span>Milestones unlocked</span><span>${milestones}</span></div>
       <div class="progress-wrap"><div class="progress-bar" style="width:${Math.min(milestones * 20, 100)}%"></div></div>
     </div>
-    <a href="/profile.html" class="btn btn-outline w-100 mt-3" style="justify-content:center;font-size:0.9rem;">
+    <a href="profile.html" class="btn btn-outline w-100 mt-3" style="justify-content:center;font-size:0.9rem;">
       <i class="fa-regular fa-user"></i> View Profile
     </a>
   `;
