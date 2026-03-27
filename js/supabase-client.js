@@ -1,6 +1,17 @@
 const SUPABASE_URL = 'https://hqbspprcvkoopufningr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhxYnNwcHJjdmtvb3B1Zm5pbmdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MjA0MjMsImV4cCI6MjA5MDA5NjQyM30.FnOl4ytTq-mi2hJwqJuu3Kl8yy8wumOnP5l9lgeZOTU';
 
+// Resolves a root-relative path against the repo base so it works on
+// both GitHub Pages (e.g. /Fatafati/) and a custom domain (/).
+function siteUrl(path) {
+  const base = document.querySelector('base')?.href
+    ?? (location.origin + location.pathname.replace(/\/[^/]*$/, '/'));
+  // Normalise: ensure base ends with /
+  const root = base.endsWith('/') ? base : base + '/';
+  // Strip leading slash from path so we don't double-up
+  return root + path.replace(/^\//, '');
+}
+
 if (!window.supabase) {
   console.error('Supabase SDK failed to load. Check your network connection.');
 }
@@ -20,7 +31,7 @@ async function getUser() {
 async function requireAuth() {
   const user = await getUser();
   if (!user) {
-    window.location.href = '?login=1';
+    window.location.href = siteUrl('/?login=1');
     return null;
   }
   return user;
@@ -35,7 +46,7 @@ async function requireAdmin() {
     .eq('id', user.id)
     .single();
   if (!data || data.role !== 'admin') {
-    window.location.href = '/';
+    window.location.href = siteUrl('/');
     return null;
   }
   return user;
@@ -52,9 +63,9 @@ async function signIn(email, password) {
 }
 
 async function signOut() {
-  if (!supabaseClient) { window.location.href = '/'; return; }
+  if (!supabaseClient) { window.location.href = siteUrl('/'); return; }
   await supabaseClient.auth.signOut();
-  window.location.href = '/';
+  window.location.href = siteUrl('/');
 }
 
 async function getUserProgress(userId) {

@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /profile.html
 
-Sitemap: https://fatafati.com/sitemap.xml
+Sitemap: https://fatafati.openworldregister.com/sitemap.xml
