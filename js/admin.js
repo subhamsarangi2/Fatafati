@@ -83,8 +83,11 @@ function renderCurriculumImport(el) {
         <label class="form-label">JSON Payload</label>
         <textarea class="form-control json-editor" id="curriculum-json" placeholder='[{"milestone_title":"...","milestone_description":"...","topics":[{"title":"...","slug":"...","description":"...","order_index":1}]}]'></textarea>
       </div>
-      <button class="btn btn-primary" id="curriculum-btn"><i class="fa-solid fa-upload"></i> Import Curriculum</button>
-      <button class="btn btn-outline" id="clear-curriculum-btn" style="color:var(--red);border-color:var(--red);margin-left:0.75rem;"><i class="fa-solid fa-trash"></i> Clear All Curriculum</button>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
+        <button class="btn btn-primary" id="curriculum-btn"><i class="fa-solid fa-upload"></i> Import Curriculum</button>
+        <button class="btn btn-outline" id="load-existing-btn"><i class="fa-solid fa-download"></i> Load Existing</button>
+        <button class="btn btn-outline" id="clear-curriculum-btn" style="color:var(--red);border-color:var(--red);"><i class="fa-solid fa-trash"></i> Clear All</button>
+      </div>
     </div>
     <div class="card mt-4" style="max-width:760px;background:var(--bg);">
       <h4 style="font-size:0.95rem;margin-bottom:1rem;">Expected JSON format</h4>
@@ -204,6 +207,40 @@ function renderCurriculumImport(el) {
     }
   });
 
+  document.getElementById('load-existing-btn').addEventListener('click', async function () {
+    this.disabled = true;
+    this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+
+    const { data: milestones } = await supabaseClient
+      .from('milestones')
+      .select('*, topics(title, slug, description, order_index)')
+      .order('order_index');
+
+    this.disabled = false;
+    this.innerHTML = '<i class="fa-solid fa-download"></i> Load Existing';
+
+    if (!milestones?.length) {
+      document.getElementById('curriculum-alert').innerHTML = '<div class="alert alert-info">No existing curriculum found.</div>';
+      return;
+    }
+
+    const payload = milestones.map(ms => ({
+      milestone_title: ms.title,
+      milestone_description: ms.description || '',
+      topics: (ms.topics || [])
+        .sort((a, b) => a.order_index - b.order_index)
+        .map(t => ({
+          title: t.title,
+          slug: t.slug,
+          description: t.description || '',
+          order_index: t.order_index
+        }))
+    }));
+
+    document.getElementById('curriculum-json').value = JSON.stringify(payload, null, 2);
+    document.getElementById('curriculum-alert').innerHTML = '<div class="alert alert-success">Existing curriculum loaded. Edit and re-import to update.</div>';
+  });
+
   document.getElementById('clear-curriculum-btn').addEventListener('click', async function () {
     if (!confirm('This will permanently delete ALL milestones, topics, questions, and user progress. Are you sure?')) return;
     if (!confirm('Second confirmation: this cannot be undone. Delete everything?')) return;
@@ -230,15 +267,26 @@ function renderCurriculumImport(el) {
 async function renderMilestones(el) {
   const { data: rows } = await supabaseClient
     .from('milestones')
-    .select('*, topics(count)')
+    .select('*, topics(count), questions(count)')
     .order('order_index');
 
-  const tableRows = (rows || []).map(ms => `
+  const tableRows = (rows || []).map(ms => {
+    const qCount = ms.questions?.[0]?.count ?? 0;
+    const contentBadge = qCount > 0
+      ? `<span style="color:#16a34a;font-size:0.82rem;font-weight:600;"><i class="fa-solid fa-circle-check"></i> ${qCount}q</span>`
+      : `<span style="color:var(--grey);font-size:0.82rem;"><i class="fa-regular fa-circle"></i> Empty</span>`;
+    return `
     <tr>
       <td>${ms.order_index}</td>
-      <td style="font-weight:600;color:var(--blue);">${ms.title}</td>
+      <td>
+        <button class="ms-preview-btn" style="background:none;border:none;cursor:pointer;font-weight:600;color:var(--blue);font-family:inherit;font-size:inherit;text-align:left;padding:0;text-decoration:underline;text-underline-offset:3px;"
+          data-id="${ms.id}" data-title="${ms.title.replace(/"/g,'&quot;')}">
+          ${ms.title}
+        </button>
+      </td>
       <td style="color:var(--grey);">${ms.description || '—'}</td>
       <td>${ms.topics?.[0]?.count ?? 0}</td>
+      <td>${contentBadge}</td>
       <td style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <button class="btn btn-outline btn-sm import-lesson-btn" style="font-size:0.8rem;padding:0.3rem 0.75rem;"
           data-id="${ms.id}" data-type="milestone">
@@ -251,19 +299,63 @@ async function renderMilestones(el) {
       </td>
     </tr>
     <tr class="import-panel-row" id="panel-milestone-${ms.id}" style="display:none;">
-      <td colspan="5" style="padding:0;">${buildImportPanel('milestone', ms.id)}</td>
+      <td colspan="6" style="padding:0;">${buildImportPanel('milestone', ms.id)}</td>
     </tr>
-  `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--grey);padding:2rem;">No milestones yet.</td></tr>';
+  `;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--grey);padding:2rem;">No milestones yet.</td></tr>';
 
   el.innerHTML = `
     <h1 class="admin-section-title" style="font-size:1.8rem;border:none;padding:0;margin-bottom:2rem;">Milestones</h1>
     <div class="card" style="overflow-x:auto;">
       <table class="data-table">
-        <thead><tr><th>#</th><th>Title</th><th>Description</th><th>Topics</th><th></th></tr></thead>
+        <thead><tr><th>#</th><th>Title</th><th>Description</th><th>Topics</th><th>Questions</th><th></th></tr></thead>
         <tbody>${tableRows}</tbody>
       </table>
     </div>
   `;
+
+  el.querySelectorAll('.ms-preview-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const { id, title } = btn.dataset;
+      const modal = document.getElementById('topic-preview-modal');
+      const body = document.getElementById('topic-preview-body');
+
+      body.innerHTML = '<div class="spinner"></div>';
+      modal.classList.add('open');
+
+      const { data: questions } = await supabaseClient
+        .from('questions')
+        .select('*')
+        .eq('milestone_id', id);
+
+      const qs = questions || [];
+
+      const questionsHtml = qs.length
+        ? qs.map((q, i) => {
+            const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]');
+            return `
+              <div style="margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border);">
+                <div style="font-weight:600;font-size:1rem;color:var(--blue);margin-bottom:1rem;line-height:1.5;">${i + 1}. ${q.question_text}</div>
+                <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                  ${opts.map((opt, oi) => `
+                    <div style="padding:0.7rem 1rem;border-radius:6px;font-size:0.92rem;
+                      border:2px solid ${oi === q.correct_option ? '#16a34a' : 'var(--border)'};
+                      background:${oi === q.correct_option ? '#f0fdf4' : 'transparent'};
+                      color:${oi === q.correct_option ? '#166534' : 'var(--grey)'};">
+                      ${oi === q.correct_option ? '✓ ' : ''}${opt}
+                    </div>`).join('')}
+                </div>
+              </div>`;
+          }).join('')
+        : `<p style="color:var(--grey);">No questions added to this milestone test yet.</p>`;
+
+      body.innerHTML = `
+        <h2 style="font-size:1.75rem;margin-bottom:0.5rem;">${title}</h2>
+        <p style="color:var(--grey);font-size:0.9rem;margin-bottom:2.5rem;">Milestone Test — ${qs.length} question${qs.length !== 1 ? 's' : ''}</p>
+        <div style="max-width:680px;">${questionsHtml}</div>
+      `;
+    });
+  });
 
   bindImportPanels(el);
 }
@@ -271,10 +363,20 @@ async function renderMilestones(el) {
 async function renderTopics(el) {
   const { data: rows } = await supabaseClient
     .from('topics')
-    .select('*, milestones(title)')
+    .select('*, milestones(title), questions(count)')
     .order('order_index');
 
-  const tableRows = (rows || []).map(t => `
+  const tableRows = (rows || []).map(t => {
+    const qCount = t.questions?.[0]?.count ?? 0;
+    const hasLesson = !!t.body_markdown;
+    const contentBadge = (hasLesson && qCount > 0)
+      ? `<span style="color:#16a34a;font-size:0.82rem;font-weight:600;"><i class="fa-solid fa-circle-check"></i> Lesson + ${qCount}q</span>`
+      : hasLesson
+        ? `<span style="color:#ca8a04;font-size:0.82rem;font-weight:600;"><i class="fa-solid fa-circle-half-stroke"></i> Lesson only</span>`
+        : qCount > 0
+          ? `<span style="color:#ca8a04;font-size:0.82rem;font-weight:600;"><i class="fa-solid fa-circle-half-stroke"></i> ${qCount}q only</span>`
+          : `<span style="color:var(--grey);font-size:0.82rem;"><i class="fa-regular fa-circle"></i> Empty</span>`;
+    return `
     <tr>
       <td>
         <button class="topic-preview-btn" style="background:none;border:none;cursor:pointer;font-weight:600;color:var(--blue);font-family:inherit;font-size:inherit;text-align:left;padding:0;text-decoration:underline;text-underline-offset:3px;"
@@ -285,6 +387,7 @@ async function renderTopics(el) {
       <td><code style="font-size:0.82rem;">${t.slug}</code></td>
       <td>${t.milestones?.title ?? '—'}</td>
       <td>${t.order_index}</td>
+      <td>${contentBadge}</td>
       <td style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <button class="btn btn-outline btn-sm import-lesson-btn" style="font-size:0.8rem;padding:0.3rem 0.75rem;"
           data-id="${t.id}" data-type="topic">
@@ -297,15 +400,16 @@ async function renderTopics(el) {
       </td>
     </tr>
     <tr class="import-panel-row" id="panel-topic-${t.id}" style="display:none;">
-      <td colspan="5" style="padding:0;">${buildImportPanel('topic', t.id)}</td>
+      <td colspan="6" style="padding:0;">${buildImportPanel('topic', t.id)}</td>
     </tr>
-  `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--grey);padding:2rem;">No topics yet.</td></tr>';
+  `;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--grey);padding:2rem;">No topics yet.</td></tr>';
 
   el.innerHTML = `
     <h1 class="admin-section-title" style="font-size:1.8rem;border:none;padding:0;margin-bottom:2rem;">Topics</h1>
     <div class="card" style="overflow-x:auto;">
       <table class="data-table">
-        <thead><tr><th>Title</th><th>Slug</th><th>Milestone</th><th>Order</th><th></th></tr></thead>
+        <thead><tr><th>Title</th><th>Slug</th><th>Milestone</th><th>Order</th><th>Content</th><th></th></tr></thead>
         <tbody>${tableRows}</tbody>
       </table>
     </div>
@@ -320,21 +424,71 @@ async function renderTopics(el) {
       body.innerHTML = '<div class="spinner"></div>';
       modal.classList.add('open');
 
-      const { data, error } = await supabaseClient.from('topics').select('body_markdown, questions(count)').eq('id', id).single();
+      const { data, error } = await supabaseClient
+        .from('topics')
+        .select('*, milestones(title), questions(*)')
+        .eq('id', id)
+        .single();
 
-      if (error || !data?.body_markdown) {
-        body.innerHTML = `
-          <div style="text-align:center;padding:2rem 0;">
-            <i class="fa-solid fa-circle-exclamation" style="font-size:2.5rem;color:var(--grey);opacity:0.4;margin-bottom:1rem;display:block;"></i>
-            <p style="color:var(--grey);">No lesson content yet for <strong>${title}</strong>.</p>
-            <p class="text-muted" style="margin-top:0.5rem;">Close this and use "Import Lessons" to add content.</p>
-          </div>`;
+      if (error || !data) {
+        body.innerHTML = `<div style="text-align:center;padding:2rem 0;color:var(--grey);">Failed to load topic.</div>`;
         return;
       }
 
+      const lessonHtml = data.body_markdown
+        ? marked.parse(data.body_markdown)
+        : `<p style="color:var(--grey);">No lesson content yet. Use "Import Lessons" to add content.</p>`;
+
+      const questions = (data.questions || []).sort((a, b) => a.order_index - b.order_index);
+      const questionsHtml = questions.length
+        ? questions.map((q, i) => {
+            const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]');
+            return `
+              <div style="margin-bottom:1.75rem;padding-bottom:1.75rem;border-bottom:1px solid var(--border);">
+                <div style="font-weight:600;font-size:0.95rem;color:var(--blue);margin-bottom:0.75rem;">${i + 1}. ${q.question_text}</div>
+                <div style="display:flex;flex-direction:column;gap:0.4rem;">
+                  ${opts.map((opt, oi) => `
+                    <div style="padding:0.6rem 0.9rem;border-radius:6px;font-size:0.88rem;
+                      border:2px solid ${oi === q.correct_option ? '#16a34a' : 'var(--border)'};
+                      background:${oi === q.correct_option ? '#f0fdf4' : 'transparent'};
+                      color:${oi === q.correct_option ? '#166534' : 'var(--grey)'};">
+                      ${oi === q.correct_option ? '✓ ' : ''}${opt}
+                    </div>`).join('')}
+                </div>
+              </div>`;
+          }).join('')
+        : `<p style="color:var(--grey);font-size:0.9rem;">No questions added yet.</p>`;
+
       body.innerHTML = `
-        <h2 style="font-size:1.4rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:2px solid var(--border);">${title}</h2>
-        <div class="lesson-body" style="font-size:0.95rem;line-height:1.75;">${marked.parse(data.body_markdown)}</div>
+        <style>
+          #topic-preview-body h1,
+          #topic-preview-body h2,
+          #topic-preview-body h3 { margin: 2.5rem 0 1rem; line-height: 1.35; }
+          #topic-preview-body p { margin-bottom: 1.4rem; }
+          #topic-preview-body ul,
+          #topic-preview-body ol { padding-left: 2rem; margin-bottom: 1.4rem; }
+          #topic-preview-body li { margin-bottom: 0.5rem; line-height: 1.7; }
+          #topic-preview-body strong { color: var(--blue); }
+          #topic-preview-body em { color: var(--red); font-style: italic; }
+          #topic-preview-body code { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 0.15em 0.45em; font-family: monospace; font-size: 0.88em; }
+          #topic-preview-body blockquote { border-left: 4px solid var(--border); padding-left: 1.25rem; color: var(--grey); margin: 1.5rem 0; }
+          #topic-preview-body table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+          #topic-preview-body th, #topic-preview-body td { border: 1px solid var(--border); padding: 0.6rem 0.9rem; font-size: 0.92rem; }
+          #topic-preview-body th { background: var(--bg); font-weight: 700; }
+        </style>
+        <div style="max-width:680px;margin:0 auto;">
+          <div style="font-size:0.78rem;color:var(--grey);text-transform:uppercase;letter-spacing:0.07em;font-weight:700;margin-bottom:0.5rem;">${data.milestones?.title ?? ''}</div>
+          <h2 style="font-size:1.75rem;margin-bottom:2rem;">${data.title}</h2>
+          ${data.image_url ? `<img src="${data.image_url}" alt="${data.title}" style="width:100%;max-height:260px;object-fit:cover;border-radius:var(--radius);margin-bottom:2rem;" />` : ''}
+          <div style="font-size:1rem;line-height:2;margin-bottom:3rem;">${lessonHtml}</div>
+
+          <div style="border-top:2px solid var(--border);padding-top:2rem;">
+            <div style="font-size:0.78rem;color:var(--grey);text-transform:uppercase;letter-spacing:0.07em;font-weight:700;margin-bottom:1.75rem;">
+              Quiz — ${questions.length} question${questions.length !== 1 ? 's' : ''}
+            </div>
+            ${questionsHtml}
+          </div>
+        </div>
       `;
     });
   });
