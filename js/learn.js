@@ -1,3 +1,21 @@
+const CURRICULUM_CACHE_KEY = 'fatafati_curriculum';
+const CURRICULUM_CACHE_TTL = 60 * 60 * 1000; // 1 hour in ms (client-side fallback)
+const CURRICULUM_EDGE_URL = 'https://hqbspprcvkoopufningr.supabase.co/functions/v1/curriculum';
+
+function getCachedCurriculum() {
+  try {
+    const raw = localStorage.getItem(CURRICULUM_CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CURRICULUM_CACHE_TTL) { localStorage.removeItem(CURRICULUM_CACHE_KEY); return null; }
+    return data;
+  } catch { return null; }
+}
+
+function setCachedCurriculum(data) {
+  try { localStorage.setItem(CURRICULUM_CACHE_KEY, JSON.stringify({ data, ts: Date.now() })); } catch {}
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
   const user = await getUser();
   updateNavAuth(user);
@@ -8,15 +26,46 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
   renderProgressSidebar(progress);
 
-  const { data: milestones, error } = await supabaseClient
-    .from('milestones')
-    .select('*, topics(id, title, slug, description, order_index)')
-    .order('order_index');
+  let milestones;
 
-  if (error || !milestones) {
-    document.getElementById('curriculum-container').innerHTML =
-      '<div class="alert alert-error">Failed to load lessons. Please try again.</div>';
-    return;
+  if (!user) {
+    // Try localStorage first, then Edge Function (Redis-backed), then direct DB
+    const cached = getCachedCurriculum();
+    if (cached) {
+      milestones = cached;
+    } else {
+      try {
+        const res = await fetch(CURRICULUM_EDGE_URL);
+        if (!res.ok) throw new Error('Edge function error');
+        milestones = await res.json();
+        setCachedCurriculum(milestones);
+      } catch {
+        // Fallback to direct Supabase if Edge Function fails
+        const { data, error } = await supabaseClient
+          .from('milestones')
+          .select('*, topics(id, title, slug, description, order_index)')
+          .order('order_index');
+        if (error || !data) {
+          document.getElementById('curriculum-container').innerHTML =
+            '<div class="alert alert-error">Failed to load lessons. Please try again.</div>';
+          return;
+        }
+        milestones = data;
+        setCachedCurriculum(data);
+      }
+    }
+  } else {
+    // Authed users always get fresh data
+    const { data, error } = await supabaseClient
+      .from('milestones')
+      .select('*, topics(id, title, slug, description, order_index)')
+      .order('order_index');
+    if (error || !data) {
+      document.getElementById('curriculum-container').innerHTML =
+        '<div class="alert alert-error">Failed to load lessons. Please try again.</div>';
+      return;
+    }
+    milestones = data;
   }
 
   if (milestones.length === 0) {

@@ -1,3 +1,19 @@
+const INVALIDATE_URL = 'https://hqbspprcvkoopufningr.supabase.co/functions/v1/invalidate-cache';
+
+async function invalidateCurriculumCache() {
+  try {
+    const session = await getSession();
+    await fetch(INVALIDATE_URL, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${session?.access_token}` }
+    });
+    // Also clear localStorage cache on this device
+    localStorage.removeItem('fatafati_curriculum');
+  } catch (e) {
+    console.warn('Cache invalidation failed (non-critical):', e);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
   const user = await requireAdmin();
   if (!user) return;
@@ -204,6 +220,7 @@ function renderCurriculumImport(el) {
       if (topicsUpdated) parts.push(`${topicsUpdated} topic(s) updated`);
       document.getElementById('curriculum-alert').innerHTML = `<div class="alert alert-success">${parts.join(', ') || 'Nothing to change'}.</div>`;
       document.getElementById('curriculum-json').value = '';
+      await invalidateCurriculumCache();
     }
   });
 
@@ -261,6 +278,7 @@ function renderCurriculumImport(el) {
     document.getElementById('curriculum-alert').innerHTML = errors.length
       ? `<div class="alert alert-error">${errors.join('<br>')}</div>`
       : '<div class="alert alert-success">All curriculum data cleared.</div>';
+    await invalidateCurriculumCache();
   });
 }
 
@@ -651,6 +669,7 @@ Technical Constraints:
       alertEl.innerHTML = errors.length
         ? `<div class="alert alert-error">${errors.join('<br>')}</div>`
         : '<div class="alert alert-success">Saved successfully.</div>';
+      if (!errors.length) await invalidateCurriculumCache();
     });
   });
 }

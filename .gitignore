@@ -1,1 +1,46 @@
+# ── Editor ──
 .vscode/
+.idea/
+*.suo
+*.user
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Node (for any local tooling) ──
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ── Supabase ──
+supabase/.temp/
+supabase/.branches/
+.supabase/
+
+# ── Environment / secrets ──
+.env
+.env.local
+.env.*.local
+*.env
+
+# ── Build output ──
+dist/
+build/
+.cache/
+.parcel-cache/
+
+# ── Logs ──
+*.log
+logs/
+
+# ── Misc ──
+*.bak
+*.tmp
+*.swp
