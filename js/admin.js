@@ -375,51 +375,62 @@ function bindImportPanels(el) {
       let prompt;
 
       if (type === 'topic') {
-        prompt = `Generate a lesson for the following English learning topic and return ONLY valid JSON in this exact format, no explanation:
-
-Topic: "${title}"
-Milestone: "${milestone}"
+        prompt = `Generate an intensive, deep-dive lesson for the following English learning topic. Return ONLY valid JSON in this exact format, no explanation:
+Topic: "{title}"
+Milestone: "{milestone}"
 Description: "${description}"
-
 {
-  "body_markdown": "[Full lesson content in markdown. Start directly with the content — no top-level heading. Include explanation, examples, and practice sentences.]",
-  "questions": [
-    {
-      "question_text": "[Question text — use exactly this field name]",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correct_option": 0
-    }
-  ]
+"body_markdown": "[Deep-dive lesson content]",
+"questions": [
+{
+"question_text": "[Question text]",
+"options": ["Option A", "Option B", "Option C", "Option D"],
+"correct_option": 0
 }
-
-Requirements:
-- Language: write in a natural mix of simple English and standard Bengali (neutral Bengali, not region-specific). Explain English concepts in Bengali where it aids understanding, and use English for the actual examples and terms being taught.
-- body_markdown: thorough lesson in markdown (headings, examples, tables if useful)
-- questions: exactly 10 multiple-choice questions testing the lesson content
-- Each question MUST use the field name "question_text" (not "question", not "text", not anything else)
-- correct_option: zero-based index of the correct answer`;
+]
+}
+Content Requirements:
+ * The "Ladder" Approach: The body_markdown must follow a strict progression:
+   * Phase 1 (The Foundation): Clear definitions and basic usage rules.
+   * Phase 2 (The Mechanics): Intermediate syntax, common sentence patterns, and formal vs. informal usage.
+   * Phase 3 (The Mastery): Advanced nuances, rare exceptions, idiomatic expressions, and sophisticated "native-level" tips that go beyond textbook grammar.
+ * Language Mix: Use a sophisticated blend of standard Bengali and English. Explain the logic and philosophy behind the grammar in Bengali, but provide complex, high-level examples in English.
+ * Rich Formatting: Use markdown tables for comparisons, bold text for emphasis, and blockquotes for "Pro-Tips" or "Common Pitfalls."
+Question Requirements:
+ * Quantity: Exactly 10 multiple-choice questions.
+ * Difficulty Curve: * Questions 1-3: Intermediate (Testing application of rules).
+   * Questions 4-7: Hard (Testing context, nuances, and "trick" scenarios).
+   * Questions 8-10: Super Hard (Testing advanced synthesis, rare exceptions, or distinguishing between two "technically correct" but contextually different options).
+ * No PhD Required: Ensure that while the questions are difficult, the logic to solve them is fully explained within the body_markdown.
+ * Strict Schema: Use the field name question_text and a zero-based index for correct_option.`;
       } else {
-        prompt = `Generate milestone test questions for the following English learning milestone and return ONLY valid JSON in this exact format, no explanation:
-
-Milestone: "${title}"
-Description: "${description}"
-
+        prompt = `Generate a comprehensive Milestone Certification Exam for the following English learning milestone. Return ONLY valid JSON in this exact format, no explanation:
+Milestone: "{title}"
+Description: "{description}"
 {
-  "questions": [
-    {
-      "question_text": "[Question text — use exactly this field name]",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correct_option": 0
-    }
-  ]
+"questions": [
+{
+"question_text": "[Scenario-based or High-level Question]",
+"options": ["Option A", "Option B", "Option C", "Option D"],
+"correct_option": 0
 }
-
-Requirements:
-- Language: write questions in a natural mix of simple English and standard Bengali (neutral Bengali, not region-specific)
-- questions: exactly 25 multiple-choice questions covering all topics in this milestone
-- Each question MUST use the field name "question_text" (not "question", not "text", not anything else)
-- correct_option: zero-based index of the correct answer
-- Questions should vary in difficulty and cover the full breadth of the milestone`;
+]
+}
+Exam Specifications:
+ * Quantity: Exactly 25 multiple-choice questions.
+ * Question Distribution (The Difficulty Pyramid):
+   * Questions 1-8 (Intermediate): Focus on correct sentence construction and identifying grammar rules in standard contexts.
+   * Questions 9-17 (Hard): Focus on "Best Fit" scenarios. Use Bengali to set up a specific social or professional context (e.g., "In a formal email to a boss...") and ask for the most appropriate English response.
+   * Questions 18-25 (Expert/Super Hard): Focus on nuance, subtle differences between synonyms, rare exceptions, and correcting complex errors that "sound correct" to a beginner but are technically flawed.
+ * Variety of Assessment: * Include Error Detection (Which part of this sentence is wrong?).
+   * Include Contextual Logic (Which word changes the tone of this sentence?).
+   * Include Idiomatic Application (Using phrases in the correct cultural context).
+ * Linguistic Style: Use a natural, professional mix of Bengali and English. The Bengali should provide clear context and instruction, while the English options should be challenging and non-obvious.
+ * No Ph.D. Required: Ensure every "Super Hard" question can be solved using high-level logic and the core concepts of the Milestone description.
+Technical Constraints:
+ * Each question MUST use the field name question_text.
+ * correct_option: Zero-based index (0, 1, 2, or 3).
+ * Ensure distractor options (the wrong answers) are plausible and not obviously "silly."`;
       }
 
       navigator.clipboard.writeText(prompt).then(() => {
