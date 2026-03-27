@@ -351,29 +351,59 @@ footer a:hover { color: var(--white); }
 /* ── Hamburger ── */
 .hamburger {
   display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0.4rem;
-  color: var(--blue);
-  font-size: 1.4rem;
-  line-height: 1;
+  width: 36px;
+  height: 36px;
 }
+
+.ham-line {
+  display: block;
+  height: 2px;
+  background: var(--blue);
+  border-radius: 2px;
+  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1),
+              opacity 1s ease,
+              width 1s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.ham-top { width: 24px; }
+.ham-mid { width: 18px; }
+.ham-bot { width: 24px; }
+
+/* tap animation — top slides left, bot slides right, mid fades */
+.hamburger.is-open .ham-top { transform: translateX(-6px); }
+.hamburger.is-open .ham-mid { opacity: 0; transform: translateX(4px); }
+.hamburger.is-open .ham-bot { transform: translateX(6px); }
 
 /* ── Mobile drawer ── */
 .mobile-menu {
-  display: none;
   position: fixed;
   inset: 0;
   z-index: 200;
+  visibility: hidden;
+  pointer-events: none;
 }
-.mobile-menu.open { display: block; }
+.mobile-menu.open {
+  visibility: visible;
+  pointer-events: all;
+}
 
 .mobile-menu-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(10,49,97,0.45);
   backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.mobile-menu.open .mobile-menu-backdrop {
+  opacity: 1;
 }
 
 .mobile-menu-panel {
@@ -389,9 +419,11 @@ footer a:hover { color: var(--white); }
   gap: 0.5rem;
   overflow-y: auto;
   transform: translateX(100%);
-  transition: transform 0.25s ease;
+  transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
 }
-.mobile-menu.open .mobile-menu-panel { transform: translateX(0); }
+.mobile-menu.open .mobile-menu-panel {
+  transform: translateX(0);
+}
 
 .mobile-menu-close {
   align-self: flex-end;
@@ -438,6 +470,6 @@ footer a:hover { color: var(--white); }
   .page-header { padding: 3.5rem 0 3rem; }
   .page-header h1 { font-size: 2rem; }
   .nav-links { display: none; }
-  .hamburger { display: flex; align-items: center; justify-content: center; }
+  .hamburger { display: flex; }
   .footer-inner { flex-direction: column; text-align: center; }
 }

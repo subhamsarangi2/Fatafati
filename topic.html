@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lesson – Fatafati</title>
   <meta name="robots" content="index, follow" />
-  
+
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://fatafati.openworldregister.com/" />
   <meta property="og:title" content="ফাটাফাটি – ধাপে ধাপে ইংরেজি শিখুন" />
@@ -141,7 +141,11 @@
       <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;"></ul>
     </ul>
     <button class="btn btn-install" id="install-btn"><i class="fa-solid fa-download"></i> Install App</button>
-    <button class="hamburger" id="hamburger-btn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+    <button class="hamburger" id="hamburger-btn" aria-label="Open menu">
+      <span class="ham-line ham-top"></span>
+      <span class="ham-line ham-mid"></span>
+      <span class="ham-line ham-bot"></span>
+    </button>
   </div>
 </nav>
 
@@ -168,7 +172,7 @@
       <a href="" class="logo footer-logo">
         <img src="assets/logo.png" alt="Fatafati" class="logo-img" style="height:32px;" />
       </a>
-      <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; 2025 Fatafati</p>
+      <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; <span id="copy-year"></span> Fatafati</p>
     </div>
   </div>
 </footer>

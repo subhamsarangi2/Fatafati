@@ -80,24 +80,54 @@ async function getUserProgress(userId) {
 
 async function updateNavAuth(user) {
   const authNav = document.getElementById('auth-nav');
-  if (!authNav) return;
-  if (user) {
-    let isAdmin = false;
-    if (supabaseClient) {
-      const { data } = await supabaseClient.from('profiles').select('role').eq('id', user.id).single();
-      isAdmin = data?.role === 'admin';
+  const mobileAuthNav = document.getElementById('mobile-auth-nav');
+
+  let isAdmin = false;
+  if (user && supabaseClient) {
+    const { data } = await supabaseClient.from('profiles').select('role').eq('id', user.id).single();
+    isAdmin = data?.role === 'admin';
+  }
+
+  if (authNav) {
+    if (user) {
+      authNav.innerHTML = `
+        ${isAdmin
+          ? `<li><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>`
+          : `<li><a href="profile.html"><i class="fa-regular fa-user"></i> Profile</a></li>`}
+        <li><a href="#" onclick="signOut();return false;" class="btn btn-outline btn-sm" style="padding:0.4rem 1rem;">Sign Out</a></li>
+      `;
+    } else {
+      authNav.innerHTML = `
+        <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
+      `;
     }
-    authNav.innerHTML = `
-      ${isAdmin ? `<li><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>` : `<li><a href="profile.html"><i class="fa-regular fa-user"></i> Profile</a></li>`}
-      <li><a href="#" onclick="signOut();return false;" class="btn btn-outline btn-sm" style="padding:0.4rem 1rem;">Sign Out</a></li>
-    `;
-  } else {
-    authNav.innerHTML = `
-      <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
-    `;
-    document.getElementById('open-login')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      document.getElementById('auth-modal')?.classList.add('open');
-    });
+  }
+
+  if (mobileAuthNav) {
+    if (user) {
+      mobileAuthNav.innerHTML = `
+        ${isAdmin
+          ? `<a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a>`
+          : `<a href="profile.html"><i class="fa-regular fa-user"></i> Profile</a>`}
+        <button class="mobile-nav-btn" onclick="signOut();return false;">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+        </button>
+      `;
+    } else {
+      mobileAuthNav.innerHTML = `
+        <button class="mobile-nav-btn" id="mobile-open-login">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+        </button>
+      `;
+      document.getElementById('mobile-open-login')?.addEventListener('click', () => {
+        const modal = document.getElementById('auth-modal');
+        window.closeMenu?.();
+        if (modal) {
+          modal.classList.add('open');
+        } else {
+          window.location.href = siteUrl('/?login=1');
+        }
+      });
+    }
   }
 }

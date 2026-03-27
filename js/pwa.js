@@ -30,3 +30,50 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
+
+// Dynamic copyright year
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('copy-year');
+  if (el) el.textContent = new Date().getFullYear();
+});
+
+// ── Mobile menu ──
+document.addEventListener('DOMContentLoaded', () => {
+  const hamburger = document.getElementById('hamburger-btn');
+  const menu = document.getElementById('mobile-menu');
+  const closeBtn = document.getElementById('mobile-menu-close');
+  const backdrop = document.getElementById('mobile-menu-backdrop');
+
+  if (!hamburger || !menu) return;
+
+  function openMenu() {
+    menu.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    menu.classList.remove('open');
+    hamburger.classList.remove('is-open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  window.closeMenu = closeMenu;
+
+  hamburger.addEventListener('click', () => {
+    if (menu.classList.contains('open')) {
+      closeMenu();
+    } else {
+      hamburger.classList.add('is-open');
+      hamburger.setAttribute('aria-expanded', 'true');
+      setTimeout(openMenu, 1000);
+    }
+  });
+
+  closeBtn?.addEventListener('click', closeMenu);
+  backdrop?.addEventListener('click', closeMenu);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+});
