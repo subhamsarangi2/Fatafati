@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   let progress = null;
   if (user) {
     progress = await getUserProgress(user.id);
+    progress = await backfillNextMilestoneTopics(user, progress);
     renderProgressSidebar(progress);
   }
 
@@ -121,4 +122,52 @@ function renderProgressSidebar(progress) {
       <i class="fa-regular fa-user"></i> View Profile
     </a>
   `;
+}
+
+// Backfill: for every passed milestone, ensure the first topic of the
+// next milestone is unlocked. Fixes users stuck before this logic existed.
+async function backfillNextMilestoneTopics(user, progress) {
+  if (!progress || !progress.unlocked_milestones?.length) return progress;
+
+  const { data: allMilestones } = await supabaseClient
+    .from('milestones')
+    .select('id, order_index')
+    .order('order_index', { ascending: true });
+
+  if (!allMilestones) return progress;
+
+  let changed = false;
+  const unlocked = [...(progress.unlocked_topics || [])];
+
+  for (const passedId of progress.unlocked_milestones) {
+    const current = allMilestones.find(m => m.id === passedId);
+    if (!current) continue;
+
+    const next = allMilestones.find(m => m.order_index > current.order_index);
+    if (!next) continue;
+
+    const { data: firstTopic } = await supabaseClient
+      .from('topics')
+      .select('id')
+      .eq('milestone_id', next.id)
+      .order('order_index', { ascending: true })
+      .limit(1)
+      .single();
+
+    if (firstTopic && !unlocked.includes(firstTopic.id)) {
+      unlocked.push(firstTopic.id);
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    const updated = { ...progress, unlocked_topics: unlocked };
+    await supabaseClient
+      .from('user_progress')
+      .update({ unlocked_topics: unlocked })
+      .eq('user_id', user.id);
+    return updated;
+  }
+
+  return progress;
 }

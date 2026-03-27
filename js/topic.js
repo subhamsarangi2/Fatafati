@@ -266,8 +266,41 @@ async function recordAttempt(passed, type) {
 
     if (type === 'topic' && topic && !existing.unlocked_topics.includes(topic.id)) {
       existing.unlocked_topics = [...existing.unlocked_topics, topic.id];
-    } else if (type === 'milestone' && !existing.unlocked_milestones.includes(milestoneId)) {
-      existing.unlocked_milestones = [...existing.unlocked_milestones, milestoneId];
+    } else if (type === 'milestone') {
+      if (!existing.unlocked_milestones.includes(milestoneId)) {
+        existing.unlocked_milestones = [...existing.unlocked_milestones, milestoneId];
+      }
+
+      // Find the next milestone and unlock its first topic
+      const { data: currentMs } = await supabaseClient
+        .from('milestones')
+        .select('order_index')
+        .eq('id', milestoneId)
+        .single();
+
+      if (currentMs) {
+        const { data: nextMs } = await supabaseClient
+          .from('milestones')
+          .select('id')
+          .gt('order_index', currentMs.order_index)
+          .order('order_index', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (nextMs) {
+          const { data: firstTopic } = await supabaseClient
+            .from('topics')
+            .select('id')
+            .eq('milestone_id', nextMs.id)
+            .order('order_index', { ascending: true })
+            .limit(1)
+            .single();
+
+          if (firstTopic && !existing.unlocked_topics.includes(firstTopic.id)) {
+            existing.unlocked_topics = [...existing.unlocked_topics, firstTopic.id];
+          }
+        }
+      }
     }
 
     if (progress) {
