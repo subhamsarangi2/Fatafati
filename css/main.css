@@ -368,6 +368,47 @@ footer a:hover { color: var(--white); }
   transform: translateX(-50%) translateY(0);
 }
 
+/* ── Google OAuth button ── */
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.7rem 1.4rem;
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-family: 'Noto Serif Bengali', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--blue);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-decoration: none;
+  margin-bottom: 0;
+}
+.btn-google:hover {
+  border-color: #4285F4;
+  box-shadow: 0 2px 8px rgba(66,133,244,0.15);
+  color: var(--blue);
+}
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  color: var(--grey);
+  font-size: 0.82rem;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
 /* ── Nav auth skeleton ── */
 .nav-skeleton {
   width: 80px;

@@ -460,12 +460,16 @@
     <div class="tab-nav" style="margin-bottom:2rem;">
       <button class="tab-btn active" data-tab="login">সাইন ইন</button>
       <button class="tab-btn" data-tab="signup">অ্যাকাউন্ট তৈরি করুন</button>
-      <button class="tab-btn" data-tab="reset">পাসওয়ার্ড রিসেট</button>
     </div>
     <div id="auth-alert"></div>
 
     <!-- Login Tab -->
     <div id="tab-login">
+      <button class="btn-google w-100" id="google-login-btn" onclick="signInWithGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google" />
+        Continue with Google
+      </button>
+      <div class="auth-divider"><span>or</span></div>
       <div class="form-group">
         <label class="form-label" for="login-email">Email address</label>
         <input type="email" id="login-email" class="form-control" placeholder="you@example.com" />
@@ -494,6 +498,11 @@
 
     <!-- Signup Tab -->
     <div id="tab-signup" style="display:none;">
+      <button class="btn-google w-100" onclick="signInWithGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google" />
+        Continue with Google
+      </button>
+      <div class="auth-divider"><span>or</span></div>
       <div class="form-group">
         <label class="form-label" for="signup-email">Email address</label>
         <input type="email" id="signup-email" class="form-control" placeholder="you@example.com" />
@@ -573,16 +582,14 @@
       btn.classList.add('active');
       document.getElementById('tab-login').style.display = btn.dataset.tab === 'login' ? 'block' : 'none';
       document.getElementById('tab-signup').style.display = btn.dataset.tab === 'signup' ? 'block' : 'none';
-      document.getElementById('tab-reset').style.display = btn.dataset.tab === 'reset' ? 'block' : 'none';
+      document.getElementById('tab-reset').style.display = 'none';
       document.getElementById('auth-alert').innerHTML = '';
     });
   });
 
   document.getElementById('forgot-link').addEventListener('click', (e) => {
     e.preventDefault();
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.tab === 'reset');
-    });
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-login').style.display = 'none';
     document.getElementById('tab-signup').style.display = 'none';
     document.getElementById('tab-reset').style.display = 'block';

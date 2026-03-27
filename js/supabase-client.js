@@ -144,6 +144,14 @@ async function updateNavAuth(user) {
   }
 }
 
+async function signInWithGoogle() {
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: 'https://fatafati.openworldregister.com/learn.html' }
+  });
+  if (error) console.error(error);
+}
+
 async function redirectAfterAuth(user) {
   if (!user) return;
   const { data } = await supabaseClient.from('profiles').select('role').eq('id', user.id).single();
