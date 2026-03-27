@@ -375,7 +375,7 @@ function bindImportPanels(el) {
       let prompt;
 
       if (type === 'topic') {
-        prompt = `Generate an intensive, deep-dive lesson for the following English learning topic. Return ONLY valid JSON in this exact format, no explanation:
+        prompt = `Generate an intensive, deep-dive lesson for the following English learning topic. Return ONLY valid JSON in a code block in this exact format, no explanation:
 Topic: "{title}"
 Milestone: "{milestone}"
 Description: "${description}"
@@ -404,7 +404,7 @@ Question Requirements:
  * No PhD Required: Ensure that while the questions are difficult, the logic to solve them is fully explained within the body_markdown.
  * Strict Schema: Use the field name question_text and a zero-based index for correct_option.`;
       } else {
-        prompt = `Generate a comprehensive Milestone Certification Exam for the following English learning milestone. Return ONLY valid JSON in this exact format, no explanation:
+        prompt = `Generate a comprehensive Milestone Certification Exam for the following English learning milestone. Return ONLY valid JSON in a code block in this exact format, no explanation:
 Milestone: "{title}"
 Description: "{description}"
 {
