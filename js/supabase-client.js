@@ -100,7 +100,19 @@ async function updateNavAuth(user) {
       authNav.innerHTML = `
         <li><a href="#" id="open-login" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
       `;
+      document.getElementById('open-login')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const modal = document.getElementById('auth-modal');
+        if (modal) {
+          modal.classList.add('open');
+        } else {
+          window.location.href = siteUrl('/?login=1');
+        }
+      });
     }
+    authNav.style.opacity = '0';
+    authNav.style.transition = 'opacity 0.3s ease';
+    requestAnimationFrame(() => { authNav.style.opacity = '1'; });
   }
 
   if (mobileAuthNav) {

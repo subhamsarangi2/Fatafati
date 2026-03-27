@@ -146,19 +146,27 @@
       .learn-layout { grid-template-columns: 1fr; }
       .learn-sidebar-card { position: static; }
     }
+    .sidebar-skeleton { }
+    .skel-line {
+      background: linear-gradient(90deg, var(--border) 25%, #f0ece6 50%, var(--border) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: 4px;
+      display: block;
+    }
   </style>
 </head>
 <body>
 
 <nav class="navbar" role="navigation" aria-label="Main navigation">
   <div class="container">
-    <a href="" class="logo">
+    <a href="/" class="logo">
       <img src="assets/logo.png" alt="Fatafati" class="logo-img" />
     </a>
     <ul class="nav-links">
       <li><a href="learn.html" class="active">Browse Lessons</a></li>
       <ul id="auth-nav" style="list-style:none;display:flex;align-items:center;gap:0.25rem;">
-        <li><a href="/Fatafati/?login=1" class="btn btn-primary" style="padding:0.45rem 1.1rem;">Sign In</a></li>
+        <li><div class="nav-skeleton"></div></li>
       </ul>
     </ul>
     <button class="btn btn-install" id="install-btn"><i class="fa-solid fa-download"></i> Install App</button>
@@ -200,8 +208,12 @@
         <div class="learn-sidebar-card">
           <h3>Your Progress</h3>
           <div id="progress-section">
-            <p class="text-muted" style="font-size:0.9rem;">Sign in to track your progress across milestones and topics.</p>
-            <a href="/Fatafati/?login=1" class="btn btn-primary w-100 mt-3" style="justify-content:center;">Sign In</a>
+            <div class="sidebar-skeleton">
+              <div class="skel-line" style="width:60%;height:12px;margin-bottom:0.75rem;"></div>
+              <div class="skel-line" style="width:100%;height:8px;margin-bottom:0.5rem;"></div>
+              <div class="skel-line" style="width:80%;height:8px;margin-bottom:1.25rem;"></div>
+              <div class="skel-line" style="width:100%;height:36px;border-radius:var(--radius);"></div>
+            </div>
           </div>
         </div>
       </aside>
@@ -212,7 +224,7 @@
 <footer role="contentinfo">
   <div class="container">
     <div class="footer-inner">
-      <a href="" class="logo footer-logo">
+      <a href="/" class="logo footer-logo">
         <img src="assets/logo.png" alt="Fatafati" class="logo-img" style="height:32px;" />
       </a>
       <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">&copy; <span id="copy-year"></span> Fatafati</p>

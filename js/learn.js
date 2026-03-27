@@ -5,9 +5,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   let progress = null;
   if (user) {
     progress = await getUserProgress(user.id);
-    progress = await backfillNextMilestoneTopics(user, progress);
-    renderProgressSidebar(progress);
   }
+  renderProgressSidebar(progress);
 
   const { data: milestones, error } = await supabaseClient
     .from('milestones')
@@ -31,7 +30,15 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   let html = '';
   milestones.forEach((ms, i) => {
-    const msUnlocked = i === 0 || unlockedMilestones.includes(ms.id);
+    const msUnlocked = i === 0
+      || unlockedMilestones.includes(ms.id)
+      || (() => {
+        // also unlock if all topics of the previous milestone are passed
+        const prevMs = milestones[i - 1];
+        if (!prevMs) return false;
+        const prevTopics = (prevMs.topics || []);
+        return prevTopics.length > 0 && prevTopics.every(t => unlockedTopics.includes(t.id));
+      })();
     const topics = (ms.topics || []).sort((a, b) => a.order_index - b.order_index);
     const passedTopics = topics.filter(t => unlockedTopics.includes(t.id)).length;
 
@@ -57,8 +64,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     topics.forEach((topic, ti) => {
       const isFirstInMs = ti === 0;
       const prevPassed = ti > 0 && unlockedTopics.includes(topics[ti - 1].id);
-      const unlocked = !user || msUnlocked && (isFirstInMs || prevPassed || unlockedTopics.includes(topic.id));
       const passed = unlockedTopics.includes(topic.id);
+      const unlocked = !user || (msUnlocked && (isFirstInMs || prevPassed || passed));
 
       const statusIcon = passed
         ? `<span class="topic-status status-passed"><i class="fa-solid fa-circle-check"></i> Completed</span>`
@@ -67,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           : `<span class="topic-status status-locked"><i class="fa-solid fa-lock"></i> Locked</span>`;
 
       html += `
-        <a href="topic.html?slug=${topic.slug}" class="topic-card ${!unlocked && user ? 'locked' : ''} ${passed ? 'topic-card--passed' : ''}">
+        <a href="topic.html?slug=${topic.slug}" class="topic-card ${(!unlocked && !passed) && user ? 'locked' : ''} ${passed ? 'topic-card--passed' : ''}">
           <div class="topic-title">${topic.title}</div>
           <div class="topic-desc">${topic.description || ''}</div>
           <div class="topic-meta">
@@ -103,71 +110,68 @@ document.addEventListener('DOMContentLoaded', async function () {
   });
 
   document.getElementById('curriculum-container').innerHTML = html;
+
+  // Scroll to next unlocked topic
+  scrollToNextTopic();
 });
 
 function renderProgressSidebar(progress) {
-  if (!progress) return;
-  const unlocked = (progress.unlocked_topics || []).length;
-  const milestones = (progress.unlocked_milestones || []).length;
-  document.getElementById('progress-section').innerHTML = `
-    <div class="progress-stat">
-      <div class="progress-stat-label"><span>Topics completed</span><span>${unlocked}</span></div>
-      <div class="progress-wrap"><div class="progress-bar" style="width:${Math.min(unlocked * 5, 100)}%"></div></div>
-    </div>
-    <div class="progress-stat">
-      <div class="progress-stat-label"><span>Milestones unlocked</span><span>${milestones}</span></div>
-      <div class="progress-wrap"><div class="progress-bar" style="width:${Math.min(milestones * 20, 100)}%"></div></div>
-    </div>
-    <a href="profile.html" class="btn btn-outline w-100 mt-3" style="justify-content:center;font-size:0.9rem;">
-      <i class="fa-regular fa-user"></i> View Profile
-    </a>
-  `;
+  const section = document.getElementById('progress-section');
+  if (!section) return;
+
+  let html;
+  if (!progress) {
+    html = `
+      <p class="text-muted" style="font-size:0.9rem;">Sign in to track your progress across milestones and topics.</p>
+      <a href="/?login=1" class="btn btn-primary w-100 mt-3" style="justify-content:center;">Sign In</a>
+    `;
+  } else {
+    const unlocked = (progress.unlocked_topics || []).length;
+    const milestones = (progress.unlocked_milestones || []).length;
+    html = `
+      <div class="progress-stat">
+        <div class="progress-stat-label"><span>Topics completed</span><span>${unlocked}</span></div>
+        <div class="progress-wrap"><div class="progress-bar" style="width:${Math.min(unlocked * 5, 100)}%"></div></div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat-label"><span>Milestones unlocked</span><span>${milestones}</span></div>
+        <div class="progress-wrap"><div class="progress-bar" style="width:${Math.min(milestones * 20, 100)}%"></div></div>
+      </div>
+      <a href="profile.html" class="btn btn-outline w-100 mt-3" style="justify-content:center;font-size:0.9rem;">
+        <i class="fa-regular fa-user"></i> View Profile
+      </a>
+    `;
+  }
+
+  section.style.opacity = '0';
+  section.style.transition = 'opacity 0.3s ease';
+  section.innerHTML = html;
+  requestAnimationFrame(() => { section.style.opacity = '1'; });
 }
 
-// Backfill: for every passed milestone, ensure the first topic of the
-// next milestone is unlocked. Fixes users stuck before this logic existed.
-async function backfillNextMilestoneTopics(user, progress) {
-  if (!progress || !progress.unlocked_milestones?.length) return progress;
 
-  const { data: allMilestones } = await supabaseClient
-    .from('milestones')
-    .select('id, order_index')
-    .order('order_index', { ascending: true });
+function scrollToNextTopic() {
+  // Find the first topic card that is available but not yet completed
+  const allCards = document.querySelectorAll('.topic-card');
+  let target = null;
 
-  if (!allMilestones) return progress;
-
-  let changed = false;
-  const unlocked = [...(progress.unlocked_topics || [])];
-
-  for (const passedId of progress.unlocked_milestones) {
-    const current = allMilestones.find(m => m.id === passedId);
-    if (!current) continue;
-
-    const next = allMilestones.find(m => m.order_index > current.order_index);
-    if (!next) continue;
-
-    const { data: firstTopic } = await supabaseClient
-      .from('topics')
-      .select('id')
-      .eq('milestone_id', next.id)
-      .order('order_index', { ascending: true })
-      .limit(1)
-      .single();
-
-    if (firstTopic && !unlocked.includes(firstTopic.id)) {
-      unlocked.push(firstTopic.id);
-      changed = true;
+  for (const card of allCards) {
+    const isLocked = card.classList.contains('locked');
+    const isPassed = card.classList.contains('topic-card--passed');
+    if (!isLocked && !isPassed) {
+      target = card;
+      break;
     }
   }
 
-  if (changed) {
-    const updated = { ...progress, unlocked_topics: unlocked };
-    await supabaseClient
-      .from('user_progress')
-      .update({ unlocked_topics: unlocked })
-      .eq('user_id', user.id);
-    return updated;
-  }
+  if (!target) return;
 
-  return progress;
+  const fromTest = new URLSearchParams(window.location.search).get('scrollToNext');
+  if (fromTest === '1' || document.querySelector('.topic-card--passed')) {
+    setTimeout(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.style.outline = '2px solid var(--red)';
+      setTimeout(() => target.style.outline = '', 2000);
+    }, 400);
+  }
 }

@@ -37,7 +37,7 @@ Fatafati guides learners through a milestone-based English curriculum — from b
 
 - Vanilla HTML, CSS, JavaScript — no framework
 - [Supabase](https://supabase.com) for auth and database
-- Google Fonts — Noto Serif Bengali + Hind Siliguri
+- Google Fonts — Noto Serif Bengali
 - Font Awesome icons
 - PWA with service worker (`sw.js`) for offline support
 

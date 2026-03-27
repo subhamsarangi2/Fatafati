@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&family=Hind+Siliguri:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@300;400;500;600;700&display=swap');
 
 :root {
   --red: #B31942;
@@ -16,7 +16,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Hind Siliguri', 'Source Serif 4', Georgia, serif;
+  font-family: 'Noto Serif Bengali', Georgia, serif;
   background: var(--bg);
   color: var(--blue);
   font-size: 17px;
@@ -31,7 +31,7 @@ main {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Noto Serif Bengali', 'Playfair Display', Georgia, serif;
+  font-family: 'Noto Serif Bengali', Georgia, serif;
   line-height: 1.35;
   color: var(--blue);
 }
@@ -62,7 +62,7 @@ img { max-width: 100%; display: block; }
 }
 
 .logo {
-  font-family: 'Noto Serif Bengali', 'Playfair Display', Georgia, serif;
+  font-family: 'Noto Serif Bengali', Georgia, serif;
   font-size: 1.5rem;
   display: flex;
   align-items: center;
@@ -99,10 +99,7 @@ img { max-width: 100%; display: block; }
   gap: 0.4rem;
   padding: 0.6rem 1.4rem;
   border-radius: var(--radius);
-  font-family: 'Hind Siliguri', 'Source Serif 4', serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
+  font-family: 'Noto Serif Bengali', serif;
   transition: all 0.15s;
   border: 2px solid transparent;
   text-decoration: none;
@@ -186,7 +183,7 @@ img { max-width: 100%; display: block; }
   padding: 0.75rem 1rem;
   border: 2px solid var(--border);
   border-radius: var(--radius);
-  font-family: 'Hind Siliguri', 'Source Serif 4', serif;
+  font-family: 'Noto Serif Bengali', serif;
   font-size: 1rem;
   background: var(--white);
   color: var(--blue);
@@ -266,7 +263,7 @@ footer a:hover { color: var(--white); }
 }
 .modal-overlay.open .modal { transform: translateY(0); }
 .modal-title {
-  font-family: 'Noto Serif Bengali', 'Playfair Display', serif;
+  font-family: 'Noto Serif Bengali', serif;
   font-size: 1.6rem;
   margin-bottom: 0.5rem;
 }
@@ -293,7 +290,7 @@ footer a:hover { color: var(--white); }
   border: none;
   border-bottom: 3px solid transparent;
   margin-bottom: -2px;
-  font-family: 'Hind Siliguri', 'Source Serif 4', serif;
+  font-family: 'Noto Serif Bengali', serif;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--grey);
@@ -347,6 +344,20 @@ footer a:hover { color: var(--white); }
 .gap-2 { gap: 1rem; }
 .w-100 { width: 100%; }
 .text-center { text-align: center; }
+
+/* ── Nav auth skeleton ── */
+.nav-skeleton {
+  width: 80px;
+  height: 34px;
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--border) 25%, #f0ece6 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 
 /* ── Hamburger ── */
 .hamburger {
@@ -450,7 +461,7 @@ footer a:hover { color: var(--white); }
   border: none;
   background: none;
   cursor: pointer;
-  font-family: 'Hind Siliguri', 'Source Serif 4', serif;
+  font-family: 'Noto Serif Bengali', serif;
   width: 100%;
   text-align: left;
   transition: background 0.15s, color 0.15s;

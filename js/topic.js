@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   updateNavAuth(user);
 
   if (!user) {
-    window.location.href = '/Fatafati/?login=1';
+    window.location.href = '/?login=1';
     return;
   }
 
@@ -225,6 +225,7 @@ function bindQuizEvents(type) {
     const maxWrong = type === 'topic' ? MAX_WRONG_TOPIC : MAX_WRONG_MILESTONE;
 
     if (wrongCount > maxWrong) {
+      document.getElementById('questions-container').innerHTML = `<div style="text-align:center;padding:2rem 0;"><div class="spinner"></div><p style="color:var(--grey);font-size:0.9rem;margin-top:0.5rem;">Saving result...</p></div>`;
       await recordAttempt(false, type);
       showResult(false, type);
       return;
@@ -233,6 +234,7 @@ function bindQuizEvents(type) {
     currentQ = qi + 1;
 
     if (currentQ >= questions.length) {
+      document.getElementById('questions-container').innerHTML = `<div style="text-align:center;padding:2rem 0;"><div class="spinner"></div><p style="color:var(--grey);font-size:0.9rem;margin-top:0.5rem;">Saving result...</p></div>`;
       await recordAttempt(true, type);
       showResult(true, type);
       return;
@@ -272,37 +274,6 @@ async function recordAttempt(passed, type) {
       if (!existing.unlocked_milestones.includes(milestoneId)) {
         existing.unlocked_milestones = [...existing.unlocked_milestones, milestoneId];
       }
-
-      // Find the next milestone and unlock its first topic
-      const { data: currentMs } = await supabaseClient
-        .from('milestones')
-        .select('order_index')
-        .eq('id', milestoneId)
-        .single();
-
-      if (currentMs) {
-        const { data: nextMs } = await supabaseClient
-          .from('milestones')
-          .select('id')
-          .gt('order_index', currentMs.order_index)
-          .order('order_index', { ascending: true })
-          .limit(1)
-          .single();
-
-        if (nextMs) {
-          const { data: firstTopic } = await supabaseClient
-            .from('topics')
-            .select('id')
-            .eq('milestone_id', nextMs.id)
-            .order('order_index', { ascending: true })
-            .limit(1)
-            .single();
-
-          if (firstTopic && !existing.unlocked_topics.includes(firstTopic.id)) {
-            existing.unlocked_topics = [...existing.unlocked_topics, firstTopic.id];
-          }
-        }
-      }
     }
 
     if (progress) {
@@ -322,8 +293,8 @@ function showResult(passed, type) {
     type === 'milestone' ? soundFailedMilestone() : soundFailedTopic();
   }
   const nextLink = type === 'topic'
-    ? `<a href="learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-arrow-right"></i> Back to Lessons</a>`
-    : `<a href="learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-trophy"></i> See Next Milestone</a>`;
+    ? `<a href="learn.html?scrollToNext=1" class="btn btn-primary mt-3"><i class="fa-solid fa-arrow-right"></i> Back to Lessons</a>`
+    : `<a href="learn.html?scrollToNext=1" class="btn btn-primary mt-3"><i class="fa-solid fa-trophy"></i> See Next Milestone</a>`;
 
   const result = document.getElementById('quiz-result');
   result.innerHTML = `
