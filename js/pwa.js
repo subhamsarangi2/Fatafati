@@ -31,7 +31,21 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Dynamic copyright year
+// ── Offline toast ──
+document.addEventListener('DOMContentLoaded', () => {
+  const toast = document.createElement('div');
+  toast.id = 'offline-toast';
+  toast.innerHTML = `<i class="fa-solid fa-wifi" style="opacity:0.5;"></i> আপনি অফলাইনে আছেন। কিছু তথ্য লোড নাও হতে পারে।`;
+  document.body.appendChild(toast);
+
+  function update() {
+    toast.classList.toggle('show', !navigator.onLine);
+  }
+
+  window.addEventListener('offline', update);
+  window.addEventListener('online', update);
+  update();
+});
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('copy-year');
   if (el) el.textContent = new Date().getFullYear();

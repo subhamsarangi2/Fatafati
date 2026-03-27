@@ -1,4 +1,4 @@
-const CACHE = 'Fatafati-v11';
+const CACHE = 'Fatafati-v11.1';
 const STATIC = [
   '/',
   '/index.html',

@@ -111,6 +111,16 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   document.getElementById('curriculum-container').innerHTML = html;
 
+  // Intercept topic card clicks for unauthenticated users
+  if (!user) {
+    document.getElementById('curriculum-container').addEventListener('click', (e) => {
+      const card = e.target.closest('.topic-card');
+      if (!card || card.classList.contains('locked')) return;
+      e.preventDefault();
+      window.location.href = '/?login=1&back=learn.html';
+    });
+  }
+
   // Scroll to next unlocked topic
   scrollToNextTopic();
 });

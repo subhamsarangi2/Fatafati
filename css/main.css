@@ -345,6 +345,29 @@ footer a:hover { color: var(--white); }
 .w-100 { width: 100%; }
 .text-center { text-align: center; }
 
+/* ── Offline toast ── */
+#offline-toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  background: var(--blue);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 8px 32px rgba(10,49,97,0.25);
+  z-index: 9999;
+  transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+  white-space: nowrap;
+}
+#offline-toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
 /* ── Nav auth skeleton ── */
 .nav-skeleton {
   width: 80px;

@@ -143,3 +143,9 @@ async function updateNavAuth(user) {
     }
   }
 }
+
+async function redirectAfterAuth(user) {
+  if (!user) return;
+  const { data } = await supabaseClient.from('profiles').select('role').eq('id', user.id).single();
+  window.location.href = data?.role === 'admin' ? '/admin.html' : '/learn.html';
+}

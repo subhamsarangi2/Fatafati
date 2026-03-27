@@ -520,6 +520,10 @@
         </span>
       </button>
     </div>
+
+    <button type="button" id="close-auth-bottom" style="display:block;width:100%;margin-top:1.5rem;background:none;border:none;color:var(--grey);font-size:0.9rem;cursor:pointer;padding:0.5rem;font-family:inherit;">
+      বাতিল করুন
+    </button>
   </div>
 </div>
 
@@ -533,6 +537,9 @@
   })();
 
   document.getElementById('close-auth').addEventListener('click', () => {
+    document.getElementById('auth-modal').classList.remove('open');
+  });
+  document.getElementById('close-auth-bottom').addEventListener('click', () => {
     document.getElementById('auth-modal').classList.remove('open');
   });
   document.getElementById('auth-modal').addEventListener('click', (e) => {
@@ -621,9 +628,9 @@
 
     try {
       setLoading(btn, true);
-      const { error } = await signIn(email, password);
+      const { data, error } = await signIn(email, password);
       if (error) throw error;
-      window.location.href = window.location.pathname;
+      await redirectAfterAuth(data?.user);
     } catch (err) {
       console.error(err);
       showAuthAlert(getErrorMessage(err));
@@ -647,9 +654,10 @@
 
     try {
       setLoading(btn, true);
-      const { error } = await signUp(email, password);
+      const { data, error } = await signUp(email, password);
       if (error) throw error;
-      showAuthAlert('Account created! Check your email to confirm.', 'success');
+      document.getElementById('auth-modal').classList.remove('open');
+      await redirectAfterAuth(data?.user);
     } catch (err) {
       console.error(err);
       if (err.message?.includes('network')) {
@@ -664,6 +672,20 @@
 
   if (window.location.search.includes('login=1')) {
     document.getElementById('auth-modal').classList.add('open');
+  }
+
+  // On modal close, if we came from another page via ?back=, go back there
+  const backPage = new URLSearchParams(window.location.search).get('back');
+  if (backPage) {
+    document.getElementById('close-auth').addEventListener('click', () => {
+      window.location.href = '/' + backPage;
+    });
+    document.getElementById('close-auth-bottom').addEventListener('click', () => {
+      window.location.href = '/' + backPage;
+    });
+    document.getElementById('auth-modal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) window.location.href = '/' + backPage;
+    });
   }
 
   document.getElementById('reset-btn').addEventListener('click', async () => {

@@ -490,36 +490,65 @@ Requirements:
   });
 }
 
-async function renderAttempts(el) {
-  const { data: rows } = await supabaseClient
+async function renderAttempts(el, page = 0) {
+  const PAGE_SIZE = 10;
+  const from = page * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const { data: rows, error, count } = await supabaseClient
     .from('test_attempts')
-    .select('*, topics(title), milestones(title), profiles(email)')
+    .select('*, topics(title), milestones(title)', { count: 'exact' })
     .order('attempted_at', { ascending: false })
-    .limit(100);
+    .range(from, to);
+
+  if (error) {
+    el.innerHTML = `<div class="alert alert-error">Failed to load attempts: ${error.message}</div>`;
+    return;
+  }
+
+  const userIds = [...new Set((rows || []).map(r => r.user_id))];
+  let emailMap = {};
+  if (userIds.length) {
+    const { data: profiles } = await supabaseClient
+      .from('profiles').select('id, email').in('id', userIds);
+    (profiles || []).forEach(p => { emailMap[p.id] = p.email; });
+  }
+
+  const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
 
   const tableRows = (rows || []).map(a => {
     const name = a.topics?.title ?? a.milestones?.title ?? '—';
     const type = a.topic_id ? 'Topic' : 'Milestone';
     const date = new Date(a.attempted_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-    return `
-      <tr>
-        <td style="font-size:0.85rem;color:var(--grey);">${a.profiles?.email ?? a.user_id.slice(0, 8) + '...'}</td>
-        <td>${name}</td>
-        <td><span class="badge ${type === 'Topic' ? 'badge-user' : 'badge-admin'}">${type}</span></td>
-        <td>${a.score}</td>
-        <td><span class="badge ${a.passed ? 'badge-pass' : 'badge-fail'}">${a.passed ? 'Pass' : 'Fail'}</span></td>
-        <td style="font-size:0.85rem;color:var(--grey);">${date}</td>
-      </tr>
-    `;
+    const email = emailMap[a.user_id] ?? a.user_id.slice(0, 8) + '...';
+    return `<tr>
+      <td style="font-size:0.85rem;color:var(--grey);">${email}</td>
+      <td>${name}</td>
+      <td><span class="badge ${type === 'Topic' ? 'badge-user' : 'badge-admin'}">${type}</span></td>
+      <td>${a.score}</td>
+      <td><span class="badge ${a.passed ? 'badge-pass' : 'badge-fail'}">${a.passed ? 'Pass' : 'Fail'}</span></td>
+      <td style="font-size:0.85rem;color:var(--grey);">${date}</td>
+    </tr>`;
   }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--grey);padding:2rem;">No attempts yet.</td></tr>';
 
+  const pagination = totalPages > 1 ? `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem;font-size:0.9rem;">
+      <button class="btn btn-outline" id="pg-prev" ${page === 0 ? 'disabled' : ''} style="padding:0.4rem 1rem;">← Prev</button>
+      <span style="color:var(--grey);">Page ${page + 1} of ${totalPages}</span>
+      <button class="btn btn-outline" id="pg-next" ${page >= totalPages - 1 ? 'disabled' : ''} style="padding:0.4rem 1rem;">Next →</button>
+    </div>` : '';
+
   el.innerHTML = `
-    <h1 class="admin-section-title" style="font-size:1.8rem;border:none;padding:0;margin-bottom:2rem;">Test Attempts</h1>
+    <h1 class="admin-section-title" style="font-size:1.8rem;border:none;padding:0;margin-bottom:2rem;">Test Attempts <span style="font-size:1rem;color:var(--grey);font-weight:400;">(${count ?? 0} total)</span></h1>
     <div class="card" style="overflow-x:auto;">
       <table class="data-table">
         <thead><tr><th>User</th><th>Test</th><th>Type</th><th>Score</th><th>Result</th><th>Date</th></tr></thead>
         <tbody>${tableRows}</tbody>
       </table>
+      ${pagination}
     </div>
   `;
+
+  document.getElementById('pg-prev')?.addEventListener('click', () => renderAttempts(el, page - 1));
+  document.getElementById('pg-next')?.addEventListener('click', () => renderAttempts(el, page + 1));
 }
