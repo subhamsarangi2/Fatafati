@@ -8,6 +8,7 @@ const CACHE_TTL = 3600; // 1 hour
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Expose-Headers': 'X-Cache',
 };
 
 async function redisGet(key: string): Promise<string | null> {
@@ -19,13 +20,14 @@ async function redisGet(key: string): Promise<string | null> {
 }
 
 async function redisSet(key: string, value: string, ttl: number): Promise<void> {
-  await fetch(`${UPSTASH_URL}/set/${key}/ex/${ttl}`, {
+  // Upstash REST pipeline: POST /pipeline with array of commands
+  await fetch(`${UPSTASH_URL}/pipeline`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${UPSTASH_TOKEN}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(value),
+    body: JSON.stringify([['SET', key, value, 'EX', ttl]]),
   });
 }
 
@@ -38,7 +40,9 @@ Deno.serve(async (req) => {
     // Try cache first
     const cached = await redisGet(CACHE_KEY);
     if (cached) {
-      return new Response(cached, {
+      // cached is a JSON string stored by redisSet — parse it back to array
+      const data = typeof cached === 'string' ? JSON.parse(cached) : cached;
+      return new Response(JSON.stringify(data), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'HIT' },
       });
     }

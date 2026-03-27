@@ -32,14 +32,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Try localStorage first, then Edge Function (Redis-backed), then direct DB
     const cached = getCachedCurriculum();
     if (cached) {
+      console.log('%c[Curriculum] localStorage cache HIT', 'color:#16a34a;font-weight:bold;');
       milestones = cached;
     } else {
       try {
         const res = await fetch(CURRICULUM_EDGE_URL);
-        if (!res.ok) throw new Error('Edge function error');
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`Edge function ${res.status}: ${errText}`);
+        }
+        const cacheStatus = res.headers.get('X-Cache') ?? 'UNKNOWN';
+        console.log(`%c[Curriculum] Edge Function ${cacheStatus} (Redis)`, `color:${cacheStatus === 'HIT' ? '#0A3161' : '#ca8a04'};font-weight:bold;`);
         milestones = await res.json();
         setCachedCurriculum(milestones);
-      } catch {
+      } catch (edgeErr) {
+        console.warn('%c[Curriculum] Edge Function failed — falling back to direct DB', 'color:#B31942;font-weight:bold;', edgeErr);
         // Fallback to direct Supabase if Edge Function fails
         const { data, error } = await supabaseClient
           .from('milestones')
@@ -55,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
     }
   } else {
+    console.log('%c[Curriculum] Authenticated user — fetching fresh from DB', 'color:#7b2d8b;font-weight:bold;');
     // Authed users always get fresh data
     const { data, error } = await supabaseClient
       .from('milestones')

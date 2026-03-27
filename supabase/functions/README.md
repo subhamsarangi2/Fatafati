@@ -39,3 +39,13 @@ supabase functions deploy invalidate-cache
 ## 5. Allow public access to curriculum function
 In Supabase dashboard → Edge Functions → `curriculum` → disable JWT verification
 (the invalidate-cache function keeps JWT verification ON)
+
+----
+
+
+### Four distinct log states, each colour-coded:
+- 🟢 green — localStorage hit (fastest, no network)
+- 🔵 blue — Edge Function Redis HIT
+- 🟡 amber — Edge Function Redis MISS (DB queried, Redis repopulated)
+- 🔴 red — Edge Function failed, fell back to direct DB
+- 🟣 purple — authenticated user, always fresh from DB
