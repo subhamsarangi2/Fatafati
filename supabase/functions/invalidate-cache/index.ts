@@ -29,6 +29,7 @@ Deno.serve(async (req) => {
 
   try {
     await redisDel('curriculum_v1');
+    await redisDel('first_topic_v1');
     return new Response(JSON.stringify({ ok: true, message: 'Cache invalidated' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

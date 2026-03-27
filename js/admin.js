@@ -9,6 +9,7 @@ async function invalidateCurriculumCache() {
     });
     // Also clear localStorage cache on this device
     localStorage.removeItem('fatafati_curriculum');
+    localStorage.removeItem('fatafati_first_topic');
   } catch (e) {
     console.warn('Cache invalidation failed (non-critical):', e);
   }
@@ -409,7 +410,7 @@ async function renderTopics(el) {
       <td style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <button class="btn btn-outline btn-sm import-lesson-btn" style="font-size:0.8rem;padding:0.3rem 0.75rem;"
           data-id="${t.id}" data-type="topic">
-          <i class="fa-solid fa-upload"></i> Import Lessons
+          <i class="fa-solid fa-upload"></i> ${(hasLesson || qCount > 0) ? 'Update Lesson' : 'Import Lessons'}
         </button>
         <button class="btn btn-outline btn-sm copy-prompt-btn" style="font-size:0.8rem;padding:0.3rem 0.75rem;"
           data-type="topic" data-title="${t.title.replace(/"/g,'&quot;')}" data-description="${(t.description||'').replace(/"/g,'&quot;')}" data-milestone="${(t.milestones?.title||'').replace(/"/g,'&quot;')}">
@@ -614,12 +615,44 @@ Technical Constraints:
   });
 
   el.querySelectorAll('.import-lesson-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const { id, type } = btn.dataset;
       const panel = document.getElementById(`panel-${type}-${id}`);
       const isOpen = panel.style.display !== 'none';
       el.querySelectorAll('.import-panel-row').forEach(r => r.style.display = 'none');
-      if (!isOpen) panel.style.display = 'table-row';
+      if (isOpen) return;
+
+      panel.style.display = 'table-row';
+
+      // Only fetch existing data for topics (milestones have no body_markdown)
+      if (type === 'topic') {
+        const textarea = document.getElementById(`json-${type}-${id}`);
+        if (textarea && !textarea.value.trim()) {
+          textarea.value = 'Loading...';
+          textarea.disabled = true;
+
+          const { data, error } = await supabaseClient
+            .from('topics')
+            .select('body_markdown, questions(*)')
+            .eq('id', id)
+            .single();
+
+          textarea.disabled = false;
+
+          if (!error && data && (data.body_markdown || data.questions?.length)) {
+            const existing = {
+              ...(data.body_markdown ? { body_markdown: data.body_markdown } : {}),
+              ...(data.questions?.length ? {
+                questions: data.questions.map(({ question_text, options, correct_option }) =>
+                  ({ question_text, options, correct_option }))
+              } : {})
+            };
+            textarea.value = JSON.stringify(existing, null, 2);
+          } else {
+            textarea.value = '';
+          }
+        }
+      }
     });
   });
 

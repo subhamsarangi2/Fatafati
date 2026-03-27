@@ -85,6 +85,14 @@ document.addEventListener('DOMContentLoaded', async function () {
   const unlockedTopics = progress?.unlocked_topics ?? [];
   const unlockedMilestones = progress?.unlocked_milestones ?? [];
 
+  // Find the absolute first topic slug for the free preview indicator
+  let firstTopicSlug = null;
+  if (!user && milestones.length > 0) {
+    const firstMs = milestones[0];
+    const sorted = (firstMs.topics || []).sort((a, b) => a.order_index - b.order_index);
+    firstTopicSlug = sorted[0]?.slug ?? null;
+  }
+
   let html = '';
   milestones.forEach((ms, i) => {
     const msUnlocked = i === 0
@@ -123,15 +131,25 @@ document.addEventListener('DOMContentLoaded', async function () {
       const prevPassed = ti > 0 && unlockedTopics.includes(topics[ti - 1].id);
       const passed = unlockedTopics.includes(topic.id);
       const unlocked = !user || (msUnlocked && (isFirstInMs || prevPassed || passed));
+      const isFreePreview = !user && topic.slug === firstTopicSlug;
 
-      const statusIcon = passed
-        ? `<span class="topic-status status-passed"><i class="fa-solid fa-circle-check"></i> Completed</span>`
-        : unlocked
-          ? `<span class="topic-status status-unlocked"><i class="fa-solid fa-lock-open"></i> Available</span>`
-          : `<span class="topic-status status-locked"><i class="fa-solid fa-lock"></i> Locked</span>`;
+      let statusIcon;
+      if (passed) {
+        statusIcon = `<span class="topic-status status-passed"><i class="fa-solid fa-circle-check"></i> Completed</span>`;
+      } else if (isFreePreview) {
+        statusIcon = `<span class="topic-status" style="color:#7b2d8b;font-weight:600;"><i class="fa-solid fa-star"></i> Free Preview</span>`;
+      } else if (!user) {
+        statusIcon = `<span class="topic-status status-locked"><i class="fa-solid fa-lock"></i> Sign in to unlock</span>`;
+      } else if (unlocked) {
+        statusIcon = `<span class="topic-status status-unlocked"><i class="fa-solid fa-lock-open"></i> Available</span>`;
+      } else {
+        statusIcon = `<span class="topic-status status-locked"><i class="fa-solid fa-lock"></i> Locked</span>`;
+      }
+
+      const isLockedForUser = !user && !isFreePreview;
 
       html += `
-        <a href="topic.html?slug=${topic.slug}" class="topic-card ${(!unlocked && !passed) && user ? 'locked' : ''} ${passed ? 'topic-card--passed' : ''}">
+        <a href="topic.html?slug=${topic.slug}" class="topic-card ${isLockedForUser ? 'topic-card--signin' : ''} ${(!unlocked && !passed) && user ? 'locked' : ''} ${passed ? 'topic-card--passed' : ''} ${isFreePreview ? 'topic-card--preview' : ''}">
           <div class="topic-title">${topic.title}</div>
           <div class="topic-desc">${topic.description || ''}</div>
           <div class="topic-meta">
@@ -173,6 +191,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.getElementById('curriculum-container').addEventListener('click', (e) => {
       const card = e.target.closest('.topic-card');
       if (!card || card.classList.contains('locked')) return;
+      if (card.classList.contains('topic-card--preview')) return; // let free preview through
       e.preventDefault();
       window.location.href = '/?login=1&back=learn.html';
     });

@@ -1,3 +1,21 @@
+const FIRST_TOPIC_EDGE_URL = 'https://hqbspprcvkoopufningr.supabase.co/functions/v1/first-topic';
+const FIRST_TOPIC_CACHE_KEY = 'fatafati_first_topic';
+const FIRST_TOPIC_CACHE_TTL = 60 * 60 * 1000;
+
+function getCachedFirstTopic() {
+  try {
+    const raw = localStorage.getItem(FIRST_TOPIC_CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > FIRST_TOPIC_CACHE_TTL) { localStorage.removeItem(FIRST_TOPIC_CACHE_KEY); return null; }
+    return data;
+  } catch { return null; }
+}
+
+function setCachedFirstTopic(data) {
+  try { localStorage.setItem(FIRST_TOPIC_CACHE_KEY, JSON.stringify({ data, ts: Date.now() })); } catch {}
+}
+
 const params = new URLSearchParams(window.location.search);
 const slug = params.get('slug');
 const milestoneId = params.get('milestone');
@@ -15,26 +33,71 @@ document.addEventListener('DOMContentLoaded', async function () {
   user = await getUser();
   updateNavAuth(user);
 
-  if (!user) {
-    window.location.href = '/?login=1&back=learn.html';
-    return;
-  }
-
   if (milestoneId) {
+    if (!user) { window.location.href = '/?login=1&back=learn.html'; return; }
     await loadMilestoneTest();
   } else if (slug) {
-    await loadTopic();
+    if (!user) {
+      // Check if this is the very first topic — allow preview, gate quiz interaction
+      const { data: firstTopic } = await supabaseClient
+        .from('topics')
+        .select('slug')
+        .order('order_index', { ascending: true })
+        .limit(1)
+        .single();
+
+      if (firstTopic?.slug === slug) {
+        await loadTopic(true); // preview mode
+      } else {
+        window.location.href = '/?login=1&back=learn.html';
+      }
+      return;
+    }
+    await loadTopic(false);
   } else {
     window.location.href = '/learn.html';
   }
 });
 
-async function loadTopic() {
-  const { data, error } = await supabaseClient
-    .from('topics')
-    .select('*, milestones(title, id)')
-    .eq('slug', slug)
-    .single();
+async function loadTopic(previewMode = false) {
+  let data, error;
+
+  if (previewMode) {
+    // Try localStorage first, then Edge Function, then direct DB
+    const cached = getCachedFirstTopic();
+    if (cached) {
+      console.log('%c[First Topic] localStorage cache HIT', 'color:#16a34a;font-weight:bold;');
+      data = cached;
+    } else {
+      try {
+        const res = await fetch(FIRST_TOPIC_EDGE_URL);
+        if (!res.ok) throw new Error(`Edge function ${res.status}`);
+        const cacheStatus = res.headers.get('X-Cache') ?? 'UNKNOWN';
+        console.log(`%c[First Topic] Edge Function ${cacheStatus}`, `color:${cacheStatus === 'HIT' ? '#0A3161' : '#ca8a04'};font-weight:bold;`);
+        data = await res.json();
+        setCachedFirstTopic(data);
+      } catch (edgeErr) {
+        console.warn('%c[First Topic] Edge Function failed — falling back to DB', 'color:#B31942;font-weight:bold;', edgeErr);
+        const result = await supabaseClient
+          .from('topics')
+          .select('*, milestones(title, id), questions(*)')
+          .order('order_index', { ascending: true })
+          .limit(1)
+          .single();
+        data = result.data;
+        error = result.error;
+        if (data) setCachedFirstTopic(data);
+      }
+    }
+  } else {
+    const result = await supabaseClient
+      .from('topics')
+      .select('*, milestones(title, id)')
+      .eq('slug', slug)
+      .single();
+    data = result.data;
+    error = result.error;
+  }
 
   if (error || !data) {
     document.getElementById('page-content').innerHTML = '<div class="alert alert-error mt-5">Topic not found.</div>';
@@ -42,10 +105,9 @@ async function loadTopic() {
   }
 
   topic = data;
-
   document.title = `${topic.title} – Fatafati`;
 
-  const progress = await getUserProgress(user.id);
+  const progress = user ? await getUserProgress(user.id) : null;
   const unlocked = progress?.unlocked_topics ?? [];
 
   const ms = topic.milestones;
@@ -59,11 +121,13 @@ async function loadTopic() {
     </div>
   `;
 
-  const { data: qs } = await supabaseClient
-    .from('questions')
-    .select('*')
-    .eq('topic_id', topic.id)
-    .limit(10);
+  const { data: qs } = previewMode && data.questions
+    ? { data: data.questions }
+    : await supabaseClient
+        .from('questions')
+        .select('*')
+        .eq('topic_id', topic.id)
+        .limit(10);
 
   questions = qs || [];
 
@@ -72,13 +136,14 @@ async function loadTopic() {
     : '<p>No lesson content yet.</p>';
 
   const sidebarContent = questions.length > 0
-    ? renderQuizForm('Topic Test', questions, MAX_WRONG_TOPIC)
+    ? renderQuizForm('Topic Test', questions, MAX_WRONG_TOPIC, previewMode)
     : `<div class="quiz-section"><p class="text-muted">No quiz available for this topic yet.</p></div>`;
 
   document.getElementById('page-content').innerHTML = `
     <div class="topic-layout">
       <div>
         ${breadcrumb}
+        ${previewMode ? `<div class="alert alert-info mb-3" style="margin-bottom:1.5rem;"><i class="fa-solid fa-eye"></i> You're previewing this lesson. <a href="/?login=1" style="font-weight:700;">Sign in</a> to take the quiz and track your progress.</div>` : ''}
         <div class="lesson-body">
           <h1 style="font-size:2rem;margin-bottom:1.5rem;">${topic.title}</h1>
           ${topic.image_url ? `<img src="${topic.image_url}" alt="${topic.title}" style="border-radius:var(--radius);margin-bottom:2rem;max-height:320px;width:100%;object-fit:cover;" />` : ''}
@@ -95,7 +160,7 @@ async function loadTopic() {
     </div>
   `;
 
-  if (questions.length > 0) bindQuizEvents('topic');
+  if (questions.length > 0) bindQuizEvents('topic', previewMode);
 }
 
 async function loadMilestoneTest() {
@@ -148,12 +213,15 @@ async function loadMilestoneTest() {
   if (questions.length > 0) bindQuizEvents('milestone');
 }
 
-function renderQuizForm(title, qs, maxWrong) {
+function renderQuizForm(title, qs, maxWrong, previewMode = false) {
   if (!qs.length) return `<div class="quiz-section"><p class="text-muted">No questions available yet.</p></div>`;
 
   let html = `<div class="quiz-section" id="quiz-container">
     <h3>${title}</h3>
-    <p class="text-muted" style="font-size:0.88rem;margin-bottom:1.75rem;">Pass by getting fewer than ${maxWrong + 1} questions wrong.</p>
+    ${previewMode
+      ? `<p class="text-muted" style="font-size:0.88rem;margin-bottom:1.75rem;">Try the first question — <a href="/?login=1" style="font-weight:700;">sign in</a> to complete the full quiz.</p>`
+      : `<p class="text-muted" style="font-size:0.88rem;margin-bottom:1.75rem;">Pass by getting fewer than ${maxWrong + 1} questions wrong.</p>`
+    }
     <div class="quiz-progress">
       <span id="q-progress">Question 1 of ${qs.length}</span>
       <span>Wrong: <span class="wrong-counter" id="wrong-count">0</span> / ${maxWrong}</span>
@@ -187,12 +255,19 @@ function renderQuizForm(title, qs, maxWrong) {
   return html;
 }
 
-function bindQuizEvents(type) {
+function bindQuizEvents(type, previewMode = false) {
   let currentQ = 0;
 
   document.addEventListener('change', function (e) {
     if (e.target.type !== 'radio') return;
     const qi = parseInt(e.target.name.split('-')[1]);
+
+    // In preview mode, redirect on any option selection
+    if (previewMode) {
+      window.location.href = '/?login=1';
+      return;
+    }
+
     const btn = document.getElementById(`submit-q-${qi}`);
     if (btn) btn.style.display = 'inline-flex';
   });
