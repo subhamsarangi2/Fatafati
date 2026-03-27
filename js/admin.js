@@ -425,4 +425,141 @@ Exam Specifications:
  * Variety of Assessment: * Include Error Detection (Which part of this sentence is wrong?).
    * Include Contextual Logic (Which word changes the tone of this sentence?).
    * Include Idiomatic Application (Using phrases in the correct cultural context).
- * Linguistic Style: Use a natural, professional mix of Bengali and English. The Bengali should provide clear context and instruction, while the English options should b
+ * Linguistic Style: Use a natural, professional mix of Bengali and English. The Bengali should provide clear context and instruction, while the English options should be challenging and non-obvious.
+ * No Ph.D. Required: Ensure every "Super Hard" question can be solved using high-level logic and the core concepts of the Milestone description.
+Technical Constraints:
+ * Each question MUST use the field name question_text.
+ * correct_option: Zero-based index (0, 1, 2, or 3).
+ * Ensure distractor options (the wrong answers) are plausible and not obviously "silly."`;
+      }
+
+      navigator.clipboard.writeText(prompt).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      });
+    });
+  });
+
+  el.querySelectorAll('.import-lesson-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { id, type } = btn.dataset;
+      const panel = document.getElementById(`panel-${type}-${id}`);
+      const isOpen = panel.style.display !== 'none';
+      el.querySelectorAll('.import-panel-row').forEach(r => r.style.display = 'none');
+      if (!isOpen) panel.style.display = 'table-row';
+    });
+  });
+
+  el.querySelectorAll('.close-panel-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { id, type } = btn.dataset;
+      document.getElementById(`panel-${type}-${id}`).style.display = 'none';
+    });
+  });
+
+  el.querySelectorAll('.do-import-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const { id, type } = btn.dataset;
+      const alertEl = document.getElementById(`alert-${type}-${id}`);
+      const raw = document.getElementById(`json-${type}-${id}`).value.trim();
+      if (!raw) return;
+
+      let payload;
+      try { payload = JSON.parse(raw); }
+      catch { alertEl.innerHTML = '<div class="alert alert-error">Invalid JSON.</div>'; return; }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+      const errors = [];
+
+      if (type === 'topic') {
+        if (payload.body_markdown !== undefined) {
+          const { error } = await supabaseClient.from('topics').update({ body_markdown: payload.body_markdown }).eq('id', id);
+          if (error) errors.push('body_markdown: ' + error.message);
+        }
+        if (Array.isArray(payload.questions) && payload.questions.length > 0) {
+          await supabaseClient.from('questions').delete().eq('topic_id', id);
+          const { error } = await supabaseClient.from('questions').insert(payload.questions.map(q => ({ ...q, topic_id: id })));
+          if (error) errors.push('questions: ' + error.message);
+        }
+      } else {
+        if (Array.isArray(payload.questions) && payload.questions.length > 0) {
+          await supabaseClient.from('questions').delete().eq('milestone_id', id);
+          const { error } = await supabaseClient.from('questions').insert(payload.questions.map(q => ({ ...q, milestone_id: id })));
+          if (error) errors.push('questions: ' + error.message);
+        }
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-upload"></i> Save';
+      alertEl.innerHTML = errors.length
+        ? `<div class="alert alert-error">${errors.join('<br>')}</div>`
+        : '<div class="alert alert-success">Saved successfully.</div>';
+    });
+  });
+}
+
+async function renderAttempts(el, page = 0) {
+  const PAGE_SIZE = 10;
+  const from = page * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const { data: rows, error, count } = await supabaseClient
+    .from('test_attempts')
+    .select('*, topics(title), milestones(title)', { count: 'exact' })
+    .order('attempted_at', { ascending: false })
+    .range(from, to);
+
+  if (error) {
+    el.innerHTML = `<div class="alert alert-error">Failed to load attempts: ${error.message}</div>`;
+    return;
+  }
+
+  const userIds = [...new Set((rows || []).map(r => r.user_id))];
+  let emailMap = {};
+  if (userIds.length) {
+    const { data: profiles } = await supabaseClient
+      .from('profiles').select('id, email').in('id', userIds);
+    (profiles || []).forEach(p => { emailMap[p.id] = p.email; });
+  }
+
+  const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
+
+  const tableRows = (rows || []).map(a => {
+    const name = a.topics?.title ?? a.milestones?.title ?? '—';
+    const type = a.topic_id ? 'Topic' : 'Milestone';
+    const date = new Date(a.attempted_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const email = emailMap[a.user_id] ?? a.user_id.slice(0, 8) + '...';
+    return `<tr>
+      <td style="font-size:0.85rem;color:var(--grey);">${email}</td>
+      <td>${name}</td>
+      <td><span class="badge ${type === 'Topic' ? 'badge-user' : 'badge-admin'}">${type}</span></td>
+      <td>${a.score}</td>
+      <td><span class="badge ${a.passed ? 'badge-pass' : 'badge-fail'}">${a.passed ? 'Pass' : 'Fail'}</span></td>
+      <td style="font-size:0.85rem;color:var(--grey);">${date}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--grey);padding:2rem;">No attempts yet.</td></tr>';
+
+  const pagination = totalPages > 1 ? `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem;font-size:0.9rem;">
+      <button class="btn btn-outline" id="pg-prev" ${page === 0 ? 'disabled' : ''} style="padding:0.4rem 1rem;">← Prev</button>
+      <span style="color:var(--grey);">Page ${page + 1} of ${totalPages}</span>
+      <button class="btn btn-outline" id="pg-next" ${page >= totalPages - 1 ? 'disabled' : ''} style="padding:0.4rem 1rem;">Next →</button>
+    </div>` : '';
+
+  el.innerHTML = `
+    <h1 class="admin-section-title" style="font-size:1.8rem;border:none;padding:0;margin-bottom:2rem;">Test Attempts <span style="font-size:1rem;color:var(--grey);font-weight:400;">(${count ?? 0} total)</span></h1>
+    <div class="card" style="overflow-x:auto;">
+      <table class="data-table">
+        <thead><tr><th>User</th><th>Test</th><th>Type</th><th>Score</th><th>Result</th><th>Date</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      ${pagination}
+    </div>
+  `;
+
+  document.getElementById('pg-prev')?.addEventListener('click', () => renderAttempts(el, page - 1));
+  document.getElementById('pg-next')?.addEventListener('click', () => renderAttempts(el, page + 1));
+}
