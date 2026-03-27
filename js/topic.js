@@ -213,11 +213,13 @@ function bindQuizEvents(type) {
 
     if (isCorrect) {
       document.getElementById(`opt-${qi}-${selectedInt}`)?.classList.add('correct');
+      soundCorrectAnswer();
     } else {
       document.getElementById(`opt-${qi}-${selectedInt}`)?.classList.add('wrong');
       document.getElementById(`opt-${qi}-${q.correct_option}`)?.classList.add('correct');
       wrongCount++;
       document.getElementById('wrong-count').textContent = wrongCount;
+      soundWrongAnswer();
     }
 
     const maxWrong = type === 'topic' ? MAX_WRONG_TOPIC : MAX_WRONG_MILESTONE;
@@ -313,6 +315,12 @@ async function recordAttempt(passed, type) {
 
 function showResult(passed, type) {
   document.getElementById('questions-container').style.display = 'none';
+
+  if (passed) {
+    type === 'milestone' ? soundPassedMilestone() : soundPassedTopic();
+  } else {
+    type === 'milestone' ? soundFailedMilestone() : soundFailedTopic();
+  }
   const nextLink = type === 'topic'
     ? `<a href="learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-arrow-right"></i> Back to Lessons</a>`
     : `<a href="learn.html" class="btn btn-primary mt-3"><i class="fa-solid fa-trophy"></i> See Next Milestone</a>`;
