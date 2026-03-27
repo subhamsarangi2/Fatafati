@@ -447,6 +447,7 @@
     <div class="tab-nav" style="margin-bottom:2rem;">
       <button class="tab-btn active" data-tab="login">সাইন ইন</button>
       <button class="tab-btn" data-tab="signup">অ্যাকাউন্ট তৈরি করুন</button>
+      <button class="tab-btn" data-tab="reset">পাসওয়ার্ড রিসেট</button>
     </div>
     <div id="auth-alert"></div>
 
@@ -473,6 +474,9 @@
           <i class="fa-solid fa-spinner fa-spin"></i>
         </span>
       </button>
+      <p style="text-align:center;margin-top:1rem;font-size:0.88rem;">
+        <a href="#" id="forgot-link" style="color:var(--grey);">পাসওয়ার্ড ভুলে গেছেন?</a>
+      </p>
     </div>
 
     <!-- Signup Tab -->
@@ -493,6 +497,23 @@
       <button class="btn btn-primary w-100" id="signup-btn">
         <span class="btn-text">
           <i class="fa-solid fa-user-plus"></i> অ্যাকাউন্ট তৈরি করুন
+        </span>
+        <span class="btn-spinner" style="display:none;">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        </span>
+      </button>
+    </div>
+
+    <!-- Reset Password Tab -->
+    <div id="tab-reset" style="display:none;">
+      <p class="text-muted mb-3" style="font-size:0.92rem;">আপনার ইমেইল দিন। আমরা একটি রিসেট লিংক পাঠাব।</p>
+      <div class="form-group">
+        <label class="form-label" for="reset-email">Email address</label>
+        <input type="email" id="reset-email" class="form-control" placeholder="you@example.com" />
+      </div>
+      <button class="btn btn-primary w-100" id="reset-btn">
+        <span class="btn-text">
+          <i class="fa-solid fa-paper-plane"></i> রিসেট লিংক পাঠান
         </span>
         <span class="btn-spinner" style="display:none;">
           <i class="fa-solid fa-spinner fa-spin"></i>
@@ -532,8 +553,20 @@
       btn.classList.add('active');
       document.getElementById('tab-login').style.display = btn.dataset.tab === 'login' ? 'block' : 'none';
       document.getElementById('tab-signup').style.display = btn.dataset.tab === 'signup' ? 'block' : 'none';
+      document.getElementById('tab-reset').style.display = btn.dataset.tab === 'reset' ? 'block' : 'none';
       document.getElementById('auth-alert').innerHTML = '';
     });
+  });
+
+  document.getElementById('forgot-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === 'reset');
+    });
+    document.getElementById('tab-login').style.display = 'none';
+    document.getElementById('tab-signup').style.display = 'none';
+    document.getElementById('tab-reset').style.display = 'block';
+    document.getElementById('auth-alert').innerHTML = '';
   });
 
   // Password visibility toggles
@@ -632,6 +665,24 @@
   if (window.location.search.includes('login=1')) {
     document.getElementById('auth-modal').classList.add('open');
   }
+
+  document.getElementById('reset-btn').addEventListener('click', async () => {
+    const email = document.getElementById('reset-email').value.trim();
+    const btn = document.getElementById('reset-btn');
+    if (!email) return showAuthAlert('Please enter your email address.');
+    try {
+      setLoading(btn, true);
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://fatafati.openworldregister.com/reset-password.html'
+      });
+      if (error) throw error;
+      showAuthAlert('রিসেট লিংক পাঠানো হয়েছে। আপনার ইমেইল চেক করুন।', 'success');
+    } catch (err) {
+      showAuthAlert(getErrorMessage(err));
+    } finally {
+      setLoading(btn, false);
+    }
+  });
 
   // ── Flip heading character splitter ──
   const segmenter = new Intl.Segmenter('bn', { granularity: 'grapheme' });
