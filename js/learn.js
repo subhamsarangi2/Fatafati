@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           : `<span class="topic-status status-locked"><i class="fa-solid fa-lock"></i> Locked</span>`;
 
       html += `
-        <a href="topic.html?slug=${topic.slug}" class="topic-card ${!unlocked && user ? 'locked' : ''}">
+        <a href="topic.html?slug=${topic.slug}" class="topic-card ${!unlocked && user ? 'locked' : ''} ${passed ? 'topic-card--passed' : ''}">
           <div class="topic-title">${topic.title}</div>
           <div class="topic-desc">${topic.description || ''}</div>
           <div class="topic-meta">
